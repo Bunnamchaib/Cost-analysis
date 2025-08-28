@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paint Process Costing – Single File</title>
+  <style>
+    :root {
+      --bg:#0f172a; /* slate-900 */
+      --panel:#111827; /* gray-900 */
+      --muted:#94a3b8; /* slate-400 */
+      --text:#e5e7eb; /* gray-200 */
+      --accent:#22d3ee; /* cyan-400 */
+      --ok:#4ade80; /* green-400 */
+      --warn:#f59e0b; /* amber-500 */
+      --danger:#f87171; /* red-400 */
+      --border:#1f2937; /* gray-800 */
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji"}
+    h1,h2,h3{margin:.6rem 0 0.4rem}
+    .container{max-width:1100px;margin:24px auto;padding:0 16px}
+    .grid{display:grid;gap:16px}
+    .grid.cols-2{grid-template-columns:1fr 1fr}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    label{display:block;color:var(--muted);font-size:12px;margin:6px 0 4px}
+    input[type="number"], input[type="text"], select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b1220;color:var(--text)}
+    input[readonly]{opacity:.8}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btnbar{display:flex;gap:10px;flex-wrap:wrap}
+    button{cursor:pointer;border:1px solid var(--border);background:#0b1220;color:var(--text);padding:10px 14px;border-radius:10px}
+    button.primary{background:linear-gradient(135deg, #0891b2, #22d3ee);color:#001018;border:0;font-weight:600}
+    button.ghost{background:transparent}
+    button.warn{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#231800;border:0;font-weight:600}
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .kpi .item{background:#0b1220;border:1px dashed var(--border);padding:12px;border-radius:12px}
+    .kpi .item b{display:block;font-size:18px;margin-bottom:6px}
+    code, pre{background:#0b1220;border:1px solid var(--border);border-radius:12px;padding:12px;display:block;overflow:auto;white-space:pre}
+    .hint{color:var(--muted);font-size:12px}
+    hr{border:0;border-top:1px solid var(--border);margin:12px 0}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:#0b1220;color:var(--muted);font-size:12px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:8px 10px}
+    thead th{font-size:12px;color:var(--muted);font-weight:600;text-align:left}
+    tbody tr{background:#0b1220;border:1px solid var(--border)}
+    tbody tr td{border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    tbody tr td:first-child{border-left:1px solid var(--border);border-top-left-radius:10px;border-bottom-left-radius:10px}
+    tbody tr td:last-child{border-right:1px solid var(--border);border-top-right-radius:10px;border-bottom-right-radius:10px}
+    .inline{display:flex;gap:8px;align-items:center}
+    .right{display:flex;justify-content:flex-end;gap:8px}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Paint Process Costing <span class="tag">Prototype – Single HTML</span></h1>
+    <p class="muted">กรอกขนาดชิ้นงาน เลือกประเภทพลาสติกและสี ระบบจะคำนวณจำนวนชิ้น/จิ๊ก การใช้สี CT และแสดง ASCII layout ให้</p>
+
+    <div class="grid cols-2">
+      <!-- LEFT: INPUTS -->
+      <section class="card">
+        <h2>ชิ้นงาน (Part)</h2>
+        <div class="row">
+          <div>
+            <label>ความกว้าง (Width, cm)</label>
+            <input id="partW" type="number" min="0" step="0.01" value="10" />
+          </div>
+          <div>
+            <label>ความยาว (Height, cm)</label>
+            <input id="partH" type="number" min="0" step="0.01" value="5" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>ความสูง (Depth, cm)</label>
+            <input id="partD" type="number" min="0" step="0.01" value="2" />
+          </div>
+          <div>
+            <label>ประเภทพลาสติก</label>
+            <select id="plastic">
+              <option value="ABS" selected>ABS</option>
+              <option value="PP">PP (ต้องพ่นไพรเมอร์ก่อน)</option>
+              <option value="PC">PC</option>
+              <option value="PS">PS</option>
+              <option value="Other">อื่น ๆ</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>ตัวคูณพื้นที่ผิว (Surface factor)</label>
+            <input id="surfaceFactor" type="number" min="0.1" step="0.05" value="1.0" />
+            <div class="hint">ใช้คูณเพื่อชดเชยรูปทรงซับซ้อน (1.0 = กล่องเรียบ)</div>
+          </div>
+          <div>
+            <label>Loss / Lot (%)</label>
+            <input id="lossPct" type="number" min="0" step="1" value="30" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>จิ๊ก (Jig) & การจัดวาง</h2>
+        <div class="row">
+          <div>
+            <label>ขนาดจิ๊กกว้าง (cm)</label>
+            <input id="jigW" type="number" min="1" step="0.1" value="50" />
+          </div>
+          <div>
+            <label>ขนาดจิ๊กยาว (cm)</label>
+            <input id="jigH" type="number" min="1" step="0.1" value="60" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>ระยะห่างขั้นต่ำ (cm)</label>
+            <input id="gap" type="number" min="0" step="0.1" value="2" />
+          </div>
+          <div>
+            <label>ลองหมุน 90° (เลือก orientation ที่จัดวางได้มากกว่า)</label>
+            <select id="tryRotate">
+              <option value="yes" selected>Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Cycle Time ต่อจิ๊ก (วินาที)</label>
+            <input id="ctPerJig" type="number" min="0" step="1" value="120" />
+          </div>
+          <div>
+            <label>หน่วยเงิน</label>
+            <input id="currency" type="text" value="฿" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Paint DB -->
+      <section class="card">
+        <h2>ฐานข้อมูลสี (Paint DB)</h2>
+        <div class="grid cols-3">
+          <div>
+            <label>ชื่อสี / โค้ด</label>
+            <input id="db_name" type="text" placeholder="เช่น Primer-PU-01" />
+          </div>
+          <div>
+            <label>ประเภท</label>
+            <select id="db_type">
+              <option value="Primer">Primer</option>
+              <option value="Base" selected>Base</option>
+              <option value="Top">Top</option>
+              <option value="Clear">Clear</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label>ความถ่วงจำเพาะ (g/cm³)</label>
+            <input id="db_sg" type="number" min="0.5" step="0.01" value="1.20" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>ราคา / กิโลกรัม</label>
+            <input id="db_price" type="number" min="0" step="0.01" value="500" />
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <div class="btnbar">
+              <button class="primary" onclick="addPaint()">+ เพิ่มเข้า DB</button>
+              <button class="ghost" onclick="clearDB()">ล้าง DB</button>
+            </div>
+          </div>
+        </div>
+        <div class="hint" id="db_count">–</div>
+      </section>
+
+      <!-- Layers -->
+      <section class="card">
+        <h2>เลเยอร์การพ่น (Layers)</h2>
+        <div class="btnbar" style="margin-bottom:10px">
+          <button class="ghost" onclick="presetDecoration()">Preset: เคลือบลาย (Base 20µm + Top 20µm)</button>
+          <button class="ghost" onclick="addLayer()">+ เพิ่มเลเยอร์</button>
+          <button class="ghost" onclick="removeLastLayer()">– ลบเลเยอร์ท้าย</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:22%">สี</th>
+              <th style="width:16%">ประเภท</th>
+              <th style="width:16%">ความหนา (µm)</th>
+              <th style="width:16%">SG (g/cm³)</th>
+              <th style="width:16%">ราคา/กก.</th>
+              <th>ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="layers"></tbody>
+        </table>
+        <div class="hint">หากเลือกพลาสติก PP ระบบจะบังคับมีเลเยอร์ Primer เป็นอันดับแรก</div>
+      </section>
+
+      <!-- RIGHT: OUTPUTS -->
+      <section class="card">
+        <h2>ผลลัพธ์ (Results)</h2>
+        <div class="kpi">
+          <div class="item"><b id="k_parts">–</b><span class="muted">ชิ้นต่อจิ๊ก</span></div>
+          <div class="item"><b id="k_paintPart">–</b><span class="muted">สีต่อชิ้น (g)</span></div>
+          <div class="item"><b id="k_paintJig">–</b><span class="muted">สีต่อจิ๊ก (g)</span></div>
+          <div class="item"><b id="k_ctJig">–</b><span class="muted">CT ต่อจิ๊ก (s)</span></div>
+          <div class="item"><b id="k_ctPart">–</b><span class="muted">CT ต่อชิ้น (s)</span></div>
+          <div class="item"><b id="k_costPart">–</b><span class="muted">ต้นทุนต่อชิ้น</span></div>
+        </div>
+        <hr/>
+        <div class="inline"><span class="muted">Orientation:</span> <span id="orientationTag" class="tag">–</span></div>
+        <div class="inline"><span class="muted">รายละเอียดต้นทุน:</span> <span id="costBreak" class="tag">–</span></div>
+        <hr/>
+        <div class="right btnbar">
+          <button class="primary" onclick="calculate()">คำนวณ (CALCULATE)</button>
+          <button onclick="resetAll()">ล้างค่า</button>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column:1 / -1">
+        <h2>ASCII Layout บนจิ๊ก</h2>
+        <pre id="ascii">(ยังไม่มีผลลัพธ์ – กดคำนวณ)</pre>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ------- Paint DB (localStorage) -------
+    const PAINT_DB_KEY = 'paintDB_v1';
+    function getDB(){
+      try{ return JSON.parse(localStorage.getItem(PAINT_DB_KEY)) || []; }catch(e){ return []; }
+    }
+    function setDB(data){ localStorage.setItem(PAINT_DB_KEY, JSON.stringify(data)); refreshDBCount(); renderLayerRows(); }
+    function refreshDBCount(){
+      const db = getDB();
+      document.getElementById('db_count').textContent = `มีรายการสีใน DB: ${db.length} รายการ`;
+    }
+    function addPaint(){
+      const name = document.getElementById('db_name').value.trim();
+      const type = document.getElementById('db_type').value;
+      const sg = parseFloat(document.getElementById('db_sg').value);
+      const price = parseFloat(document.getElementById('db_price').value);
+      if(!name || !isFinite(sg) || !isFinite(price)){
+        alert('กรุณากรอกชื่อสี SG และราคาให้ครบ'); return;
+      }
+      const db = getDB();
+      db.push({ id: crypto.randomUUID(), name, type, sg, price });
+      setDB(db);
+      document.getElementById('db_name').value = '';
+    }
+    function clearDB(){ if(confirm('ล้างฐานข้อมูลสีทั้งหมด?')) setDB([]); }
+
+    // ------- Layers -------
+    function layerRowTemplate(layer){
+      const db = getDB();
+      const options = ['<option value="">— เลือกจาก DB —</option>']
+        .concat(db.map(p=>`<option value="${p.id}">${p.name}</option>`)).join('');
+      return `<tr data-id="${layer.id}">
+        <td>
+          <select class="layer_paint">${options}</select>
+        </td>
+        <td>
+          <input class="layer_type" type="text" value="${layer.type}" />
+        </td>
+        <td>
+          <input class="layer_thk" type="number" min="0" step="0.1" value="${layer.thk}" />
+        </td>
+        <td>
+          <input class="layer_sg" type="number" min="0.5" step="0.01" value="${layer.sg}" />
+        </td>
+        <td>
+          <input class="layer_price" type="number" min="0" step="0.01" value="${layer.price}" />
+        </td>
+        <td>
+          <button class="warn" onclick="removeLayerById('${layer.id}')">ลบ</button>
+        </td>
+      </tr>`;
+    }
+    function renderLayerRows(){
+      const tbody = document.getElementById('layers');
+      tbody.innerHTML = LAYERS.map(layerRowTemplate).join('');
+      // attach change handlers to pull data from DB when a paint is selected
+      [...tbody.querySelectorAll('tr')].forEach(tr=>{
+        const select = tr.querySelector('.layer_paint');
+        select.addEventListener('change', () => {
+          const id = select.value; if(!id) return;
+          const p = getDB().find(x=>x.id===id); if(!p) return;
+          tr.querySelector('.layer_type').value = p.type;
+          tr.querySelector('.layer_sg').value = p.sg;
+          tr.querySelector('.layer_price').value = p.price;
+        });
+      });
+    }
+    function addLayer(obj){
+      LAYERS.push(Object.assign({ id: crypto.randomUUID(), type:'Base', thk:20, sg:1.20, price:500 }, obj||{}));
+      renderLayerRows();
+    }
+    function removeLastLayer(){ LAYERS.pop(); renderLayerRows(); }
+    function removeLayerById(id){
+      const idx = LAYERS.findIndex(l=>l.id===id);
+      if(idx>-1){ LAYERS.splice(idx,1); renderLayerRows(); }
+    }
+    function presetDecoration(){
+      LAYERS.length = 0;
+      addLayer({ type:'Base', thk:20 });
+      addLayer({ type:'Top', thk:20 });
+    }
+    function ensurePrimerForPP(){
+      const plastic = document.getElementById('plastic').value;
+      const hasPrimer = LAYERS.some(l=>l.type.toLowerCase()==='primer');
+      if(plastic==='PP' && !hasPrimer){
+        LAYERS.unshift({ id: crypto.randomUUID(), type:'Primer', thk:10, sg:1.10, price:500 });
+        renderLayerRows();
+      }
+    }
+
+    // ------- Core Calculation -------
+    function readNumber(id){ return parseFloat(document.getElementById(id).value); }
+
+    function surfaceAreaRect(w,h,d, factor){
+      // cm^2; factor adjusts for geometry complexity
+      return 2*(w*h + w*d + h*d) * factor;
+    }
+
+    function partsPerJig(partW, partH, jigW, jigH, gap, tryRotate){
+      // Require at least 'gap' margin on all four edges and between parts; same orientation across all parts.
+      function fit(W,H,pw,ph){
+        const availW = W - 2*gap; if(availW <= 0) return {cols:0, rows:0, count:0};
+        const availH = H - 2*gap; if(availH <= 0) return {cols:0, rows:0, count:0};
+        const cols = Math.floor((availW + gap) / (pw + gap));
+        const rows = Math.floor((availH + gap) / (ph + gap));
+        const count = Math.max(0, cols) * Math.max(0, rows);
+        return {cols, rows, count};
+      }
+      const a = fit(jigW, jigH, partW, partH);
+      if(!tryRotate){ return Object.assign(a, {rotated:false}); }
+      const b = fit(jigW, jigH, partH, partW);
+      if(b.count > a.count){ return Object.assign(b, {rotated:true}); }
+      return Object.assign(a, {rotated:false});
+    }
+
+    function asciiLayout(cols, rows){
+      if(cols<=0 || rows<=0) return '(วางไม่ได้ – ขนาดชิ้นใหญ่เกิน)';
+      const cellW = 4; // spacing between symbols (cosmetic)
+      const innerW = cols*1 + (cols-1)*(cellW-1);
+      const pad = 2;
+      const line = '+'.padEnd(innerW + pad*2 + 1,'-') + '+';
+      let out = '';
+      out += line + '\n';
+      for(let r=0;r<rows;r++){
+        let row = '|'+ ' '.repeat(pad);
+        for(let c=0;c<cols;c++){
+          row += 'O';
+          if(c<cols-1) row += ' '.repeat(cellW-1);
+        }
+        row += ' '.repeat(pad) + '|\n';
+        // spacer line (visual) except last
+        if(r<rows-1){
+          out += row;
+          out += '|' + ' '.repeat(innerW + pad*2) + '|\n';
+        } else {
+          out += row;
+        }
+      }
+      out += line;
+      return out;
+    }
+
+    function calculate(){
+      ensurePrimerForPP();
+      const w = readNumber('partW');
+      const h = readNumber('partH');
+      const d = readNumber('partD');
+      const factor = readNumber('surfaceFactor');
+      const jigW = readNumber('jigW');
+      const jigH = readNumber('jigH');
+      const gap = readNumber('gap');
+      const tryRot = document.getElementById('tryRotate').value === 'yes';
+      const ctJig = readNumber('ctPerJig');
+      const currency = document.getElementById('currency').value || '฿';
+      const lossPct = readNumber('lossPct')/100;
+
+      // 1) Parts per jig (pattern orientation)
+      const fit = partsPerJig(w, h, jigW, jigH, gap, tryRot);
+      const parts = fit.count;
+
+      // 2) Surface area (cm^2) per part
+      const SA = surfaceAreaRect(w, h, d, factor);
+
+      // 3) Paint per part by layers
+      const tbody = document.getElementById('layers');
+      const rows = [...tbody.querySelectorAll('tr')];
+      let totalPaintPerPart_g = 0;
+      let costPerPart = 0;
+      let costBreak = [];
+
+      function micronToCm(m){ return m*1e-4; }
+
+      rows.forEach(tr=>{
+        const type = tr.querySelector('.layer_type').value.trim();
+        const thk = parseFloat(tr.querySelector('.layer_thk').value) || 0; // micron
+        const sg  = parseFloat(tr.querySelector('.layer_sg').value) || 1.0; // g/cm3
+        const priceKg = parseFloat(tr.querySelector('.layer_price').value) || 0; // per kg
+        const vol_cm3 = SA * micronToCm(thk); // cm3
+        const mass_g = vol_cm3 * sg; // g per part (ideal)
+        const mass_withLoss_g = mass_g * (1 + lossPct);
+        totalPaintPerPart_g += mass_withLoss_g;
+        const cost = (mass_withLoss_g/1000) * priceKg; // ฿ per part
+        costPerPart += cost;
+        costBreak.push(`${type}: ${(mass_withLoss_g).toFixed(3)} g / ${currency}${cost.toFixed(3)}`);
+      });
+
+      // 4) Aggregations
+      const paintPerJig_g = totalPaintPerPart_g * parts;
+      const ctPerPart = parts>0 ? (ctJig/parts) : 0;
+
+      // 5) Output KPIs
+      document.getElementById('k_parts').textContent = parts;
+      document.getElementById('k_paintPart').textContent = totalPaintPerPart_g.toFixed(3);
+      document.getElementById('k_paintJig').textContent = paintPerJig_g.toFixed(3);
+      document.getElementById('k_ctJig').textContent = ctJig.toFixed(1);
+      document.getElementById('k_ctPart').textContent = ctPerPart.toFixed(2);
+      document.getElementById('k_costPart').textContent = `${currency}${costPerPart.toFixed(3)}`;
+      document.getElementById('costBreak').textContent = costBreak.join(' | ');
+
+      // 6) Orientation tag
+      const tag = fit.rotated ? 'Rotated 90° (ทุกชิ้นหันทางเดียวกัน)' : 'Default (ทุกชิ้นหันทางเดียวกัน)';
+      document.getElementById('orientationTag').textContent = tag;
+
+      // 7) ASCII layout
+      document.getElementById('ascii').textContent = asciiLayout(fit.cols, fit.rows) + `\n\nJig ${jigW} x ${jigH} cm | part ${fit.rotated?`${h}x${w}`:`${w}x${h}`} cm | gap ${gap} cm`;
+    }
+
+    function resetAll(){ localStorage.removeItem(PAINT_DB_KEY); location.reload(); }
+
+    // --------- Bootstrap ---------
+    const LAYERS = [];
+    refreshDBCount();
+    presetDecoration();
+
+    document.getElementById('plastic').addEventListener('change', ensurePrimerForPP);
+  </script>
+</body>
+</html>
