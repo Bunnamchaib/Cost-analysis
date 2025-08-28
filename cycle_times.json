@@ -1,0 +1,24 @@
+{
+  "units": "seconds",
+  "defaults": {
+    "jig": 120,
+    "gap_cm": 2,
+    "jig_size_cm": [50, 60],
+    "loss_pct": 30
+  },
+  "by_process": [
+    {
+      "process": "paint_only",
+      "ct_per_jig": 120
+    },
+    {
+      "process": "decoration",
+      "ct_per_jig": 150
+    },
+    {
+      "process": "full_process",
+      "ct_per_jig": 210
+    }
+  ],
+  "notes": "ใช้เป็นค่าอ้างอิงเริ่มต้น ผู้ใช้แก้ไขได้ใน UI"
+}
