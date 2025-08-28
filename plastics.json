@@ -1,0 +1,34 @@
+[
+  {
+    "code": "ABS",
+    "name": "ABS",
+    "requires_primer": false,
+    "default_layers": []
+  },
+  {
+    "code": "PP",
+    "name": "PP (Polypropylene)",
+    "requires_primer": true,
+    "default_layers": [
+      {
+        "type": "Primer",
+        "thk": 10,
+        "sg": 1.10,
+        "price": 420,
+        "paint_id": "primer-pu-01"
+      }
+    ]
+  },
+  {
+    "code": "PC",
+    "name": "PC",
+    "requires_primer": false,
+    "default_layers": []
+  },
+  {
+    "code": "PS",
+    "name": "PS",
+    "requires_primer": false,
+    "default_layers": []
+  }
+]
