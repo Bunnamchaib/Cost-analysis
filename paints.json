@@ -1,0 +1,42 @@
+[
+  {
+    "id": "primer-pu-01",
+    "name": "Primer PU 01",
+    "type": "Primer",
+    "sg": 1.10,
+    "price": 420,
+    "notes": "PP adhesion primer"
+  },
+  {
+    "id": "base-solid-9010",
+    "name": "Base Solid White 9010",
+    "type": "Base",
+    "sg": 1.20,
+    "price": 500,
+    "notes": "1K/2K base solid"
+  },
+  {
+    "id": "base-metallic-silver",
+    "name": "Base Metallic Silver",
+    "type": "Base",
+    "sg": 1.25,
+    "price": 640,
+    "notes": "aluminum flake"
+  },
+  {
+    "id": "top-2k-clear-90",
+    "name": "Top 2K Clear 90 Gloss",
+    "type": "Top",
+    "sg": 1.02,
+    "price": 720,
+    "notes": "high gloss clear coat"
+  },
+  {
+    "id": "top-matte-40",
+    "name": "Top Matte 40",
+    "type": "Top",
+    "sg": 1.03,
+    "price": 690,
+    "notes": "matte top coat"
+  }
+]
