@@ -1,0 +1,47 @@
+[
+  {
+    "id": "pm",
+    "name": "PM (Pre-cleaner)",
+    "price": 0.15,
+    "default_amount": 0.2,
+    "active": true,
+    "supplier": "Standard Chemical",
+    "notes": "Pre-cleaning solvent"
+  },
+  {
+    "id": "p700",
+    "name": "P700 (Main cleaner)",
+    "price": 0.18,
+    "default_amount": 0.2,
+    "active": true,
+    "supplier": "Premium Chemical",
+    "notes": "Main cleaning agent"
+  },
+  {
+    "id": "ipa",
+    "name": "IPA (Isopropyl Alcohol)",
+    "price": 0.12,
+    "default_amount": 0.2,
+    "active": false,
+    "supplier": "Chemical Supply Co.",
+    "notes": "Final cleaning stage"
+  },
+  {
+    "id": "acetone",
+    "name": "Acetone",
+    "price": 0.10,
+    "default_amount": 0.15,
+    "active": false,
+    "supplier": "Industrial Chemical",
+    "notes": "Heavy duty cleaning"
+  },
+  {
+    "id": "mek",
+    "name": "MEK (Methyl Ethyl Ketone)",
+    "price": 0.20,
+    "default_amount": 0.15,
+    "active": false,
+    "supplier": "Specialty Chemical",
+    "notes": "Strong solvent cleaner"
+  }
+]
