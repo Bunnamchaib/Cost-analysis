@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint Costing Calculator</title>
+    <title>Paint Costing Calculator - Main</title>
     <style>
         * {
             margin: 0;
@@ -19,6 +19,44 @@
             padding: 20px;
         }
 
+        .header-nav {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #4fd1c7;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: rgba(79, 209, 199, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(79, 209, 199, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            color: #b0b8c4;
+            font-size: 0.9rem;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -30,6 +68,11 @@
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
             }
         }
 
@@ -123,6 +166,11 @@
             color: white;
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -136,6 +184,7 @@
             display: flex;
             gap: 10px;
             margin: 15px 0;
+            flex-wrap: wrap;
         }
 
         .layers-table {
@@ -237,6 +286,29 @@
             grid-column: 1 / -1;
         }
 
+        .cleaning-section {
+            grid-column: 1 / -1;
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .consumables-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .consumables-table th,
+        .consumables-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .consumables-table th {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -270,25 +342,6 @@
             animation: ripple 0.6s linear;
         }
 
-        .alert {
-            padding: 12px;
-            border-radius: 6px;
-            margin: 10px 0;
-            border-left: 4px solid;
-        }
-
-        .alert-info {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
-            color: #93c5fd;
-        }
-
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: #f59e0b;
-            color: #fcd34d;
-        }
-
         .orientation-tag {
             display: inline-block;
             background: rgba(79, 209, 199, 0.2);
@@ -298,9 +351,74 @@
             font-size: 0.8rem;
             margin: 5px 0;
         }
+
+        .print-section {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-section, .print-section * {
+                visibility: visible;
+            }
+            .print-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+                font-size: 12px;
+            }
+            .print-header {
+                text-align: center;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+            }
+            .print-table th,
+            .print-table td {
+                border: 1px solid #000;
+                padding: 5px;
+                text-align: left;
+            }
+            .print-table th {
+                background: #f0f0f0;
+            }
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation Header -->
+    <div class="header-nav">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">หน้าหลัก</a>
+            <a href="paint-mixer.html" class="nav-link">คำนวณสีผสม</a>
+            <a href="data-manager.html" class="nav-link">จัดการข้อมูล</a>
+            <a href="login.html" class="nav-link">เข้าสู่ระบบ</a>
+        </div>
+        <div class="user-info" id="userInfo">ผู้ใช้ทั่วไป</div>
+    </div>
+
     <div class="container">
         <h1>เครื่องคำนวณต้นทุนการพ่นสี</h1>
         
@@ -376,54 +494,15 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="tryRotate"> Try Rotate 90°
-                </label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="tryRotate">
+                <label for="tryRotate">Try Rotate 90°</label>
             </div>
             
             <div class="form-group">
                 <label for="currency">สกุลเงิน</label>
                 <input type="text" id="currency" value="฿" maxlength="3">
             </div>
-        </div>
-
-        <!-- Paint Database -->
-        <div class="card">
-            <h2>ฐานข้อมูลสี</h2>
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary" onclick="loadExternalData()">โหลดข้อมูลภายนอก</button>
-                <button type="button" class="btn btn-danger" onclick="clearDB()">ล้าง DB</button>
-            </div>
-            
-            <h3 style="margin: 15px 0 10px 0; color: #b0b8c4;">เพิ่มสีใหม่</h3>
-            <div class="input-row">
-                <div class="form-group">
-                    <label for="paintName">ชื่อ/โค้ดสี</label>
-                    <input type="text" id="paintName">
-                </div>
-                <div class="form-group">
-                    <label for="paintType">ประเภท</label>
-                    <select id="paintType">
-                        <option value="Primer">Primer</option>
-                        <option value="Base">Base</option>
-                        <option value="Top">Top</option>
-                        <option value="Clear">Clear</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-row">
-                <div class="form-group">
-                    <label for="paintSG">SG</label>
-                    <input type="number" id="paintSG" step="0.01" value="1.20">
-                </div>
-                <div class="form-group">
-                    <label for="paintPrice">ราคา/กก.</label>
-                    <input type="number" id="paintPrice" step="1" value="500">
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="addPaint()">เพิ่มสี</button>
         </div>
 
         <!-- Layers -->
@@ -440,8 +519,7 @@
                     <tr>
                         <th>สี</th>
                         <th>ประเภท</th>
-                        <th>SG</th>
-                        <th>ราคา/กก.</th>
+                        <th>ราคา Ready to use (฿/g)</th>
                         <th>ความหนา (µm)</th>
                     </tr>
                 </thead>
@@ -450,13 +528,52 @@
             </table>
         </div>
 
+        <!-- Cleaning Materials -->
+        <div class="card cleaning-section">
+            <h2>วัสดุทำความสะอาด</h2>
+            <div class="checkbox-group">
+                <input type="checkbox" id="autoCleaningCalc" checked>
+                <label for="autoCleaningCalc">คำนวณอัตโนมัติ (20% ของสี)</label>
+            </div>
+            
+            <table class="consumables-table">
+                <thead>
+                    <tr>
+                        <th>วัสดุ</th>
+                        <th>ราคา (฿/g)</th>
+                        <th>ปริมาณ (g/part)</th>
+                        <th>ใช้งาน</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PM (Pre-cleaner)</td>
+                        <td><input type="number" id="pmPrice" value="0.15" step="0.01"></td>
+                        <td><input type="number" id="pmAmount" step="0.1" disabled></td>
+                        <td><input type="checkbox" id="usePM" checked></td>
+                    </tr>
+                    <tr>
+                        <td>P700 (Main cleaner)</td>
+                        <td><input type="number" id="p700Price" value="0.18" step="0.01"></td>
+                        <td><input type="number" id="p700Amount" step="0.1" disabled></td>
+                        <td><input type="checkbox" id="useP700" checked></td>
+                    </tr>
+                    <tr>
+                        <td>IPA (Isopropyl Alcohol)</td>
+                        <td><input type="number" id="ipaPrice" value="0.12" step="0.01"></td>
+                        <td><input type="number" id="ipaAmount" step="0.1" disabled></td>
+                        <td><input type="checkbox" id="useIPA"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Action Buttons -->
         <div class="card">
             <div class="btn-group">
                 <button type="button" class="btn btn-primary" onclick="calculate()" id="calculateBtn">CALCULATE</button>
+                <button type="button" class="btn btn-success" onclick="printReport()" id="printBtn" style="display:none;">Print/Export PDF</button>
                 <button type="button" class="btn btn-secondary" onclick="resetAll()">Reset</button>
-                <input type="file" id="importData" accept=".json" style="display: none;" onchange="importData(event)">
-                <button type="button" class="btn btn-secondary" onclick="document.getElementById('importData').click()">Import Data</button>
             </div>
         </div>
 
@@ -486,7 +603,7 @@
                 </div>
                 <div class="kpi-item">
                     <span class="kpi-value" id="costPerPart">0</span>
-                    <div class="kpi-label">Cost per Part</div>
+                    <div class="kpi-label">Total Cost per Part</div>
                 </div>
             </div>
 
@@ -500,19 +617,51 @@
         </div>
     </div>
 
+    <!-- Print Section (Hidden) -->
+    <div class="print-section" id="printSection">
+        <div class="print-header">
+            <h1>THAI CUBIC TECHNOLOGY CO. LTD.</h1>
+            <p>PAINT COSTING CALCULATION REPORT</p>
+            <p>Date: <span id="printDate"></span> | Calculation Date: <span id="calcDate"></span></p>
+        </div>
+        
+        <div id="printContent"></div>
+    </div>
+
     <script>
         // Global variables
         let layers = [];
         let paintDB = [];
+        let calculationResults = null;
         window.PLASTICS = {};
         window.CT_PRESET = {};
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            checkUserLogin();
             loadExternalData();
             setupImagePreview();
             initializeDB();
+            setupCleaningCalculation();
         });
+
+        // User authentication check
+        function checkUserLogin() {
+            const user = JSON.parse(localStorage.getItem('currentUser') || '{"username":"guest","role":"user"}');
+            document.getElementById('userInfo').textContent = `ผู้ใช้: ${user.username} (${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทั่วไป'})`;
+        }
+
+        // Cleaning materials calculation setup
+        function setupCleaningCalculation() {
+            const autoCalc = document.getElementById('autoCleaningCalc');
+            const amountInputs = ['pmAmount', 'p700Amount', 'ipaAmount'];
+            
+            autoCalc.addEventListener('change', function() {
+                amountInputs.forEach(id => {
+                    document.getElementById(id).disabled = this.checked;
+                });
+            });
+        }
 
         // Image preview setup
         function setupImagePreview() {
@@ -553,51 +702,12 @@
             updateLayerPaintOptions();
         }
 
-        function addPaint() {
-            const name = document.getElementById('paintName').value.trim();
-            const type = document.getElementById('paintType').value;
-            const sg = parseFloat(document.getElementById('paintSG').value);
-            const price = parseFloat(document.getElementById('paintPrice').value);
-
-            if (!name || !sg || !price) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            const paint = {
-                id: `custom-${Date.now()}`,
-                name: name,
-                type: type,
-                sg: sg,
-                price: price,
-                notes: 'Custom paint'
-            };
-
-            paintDB.push(paint);
-            setDB(paintDB);
-            
-            // Clear form
-            document.getElementById('paintName').value = '';
-            document.getElementById('paintSG').value = '1.20';
-            document.getElementById('paintPrice').value = '500';
-            
-            alert('เพิ่มสีเรียบร้อยแล้ว');
-        }
-
-        function clearDB() {
-            if (confirm('ต้องการล้างฐานข้อมูลสีทั้งหมดหรือไม่?')) {
-                localStorage.removeItem('paintDB_v1');
-                paintDB = [];
-                updateLayerPaintOptions();
-                alert('ล้างฐานข้อมูลเรียบร้อยแล้ว');
-            }
-        }
-
         // Layer functions
         function addLayer() {
             const layer = {
                 paintId: '',
-                thickness: 20
+                thickness: 20,
+                readyToUsePrice: 0.5 // ฿/g default
             };
             layers.push(layer);
             updateLayersTable();
@@ -611,18 +721,10 @@
         }
 
         function presetDecoration() {
-            // Add Base 20µm + Top 20µm
-            const basePaint = paintDB.find(p => p.type === 'Base') || paintDB[0];
-            const topPaint = paintDB.find(p => p.type === 'Top') || paintDB[0];
-            
             layers = [];
-            if (basePaint) {
-                layers.push({ paintId: basePaint.id, thickness: 20 });
-            }
-            if (topPaint) {
-                layers.push({ paintId: topPaint.id, thickness: 20 });
-            }
-            
+            // Add Base 20µm + Top 20µm with sample ready-to-use prices
+            layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
+            layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
             updateLayersTable();
         }
 
@@ -638,14 +740,19 @@
                     <td>
                         <select onchange="updateLayerPaint(${index}, this.value)">
                             <option value="">เลือกสี...</option>
+                            <option value="preset-base" ${layer.paintId === 'preset-base' ? 'selected' : ''}>Base Color (Preset)</option>
+                            <option value="preset-top" ${layer.paintId === 'preset-top' ? 'selected' : ''}>Top Coat (Preset)</option>
+                            <option value="preset-primer" ${layer.paintId === 'preset-primer' ? 'selected' : ''}>Primer (Preset)</option>
                             ${paintDB.map(p => 
                                 `<option value="${p.id}" ${p.id === layer.paintId ? 'selected' : ''}>${p.name}</option>`
                             ).join('')}
                         </select>
                     </td>
-                    <td>${paint ? paint.type : '-'}</td>
-                    <td>${paint ? paint.sg.toFixed(2) : '-'}</td>
-                    <td>${paint ? paint.price.toFixed(0) : '-'}</td>
+                    <td>${getLayerType(layer.paintId)}</td>
+                    <td>
+                        <input type="number" value="${layer.readyToUsePrice || 0.5}" step="0.01" min="0"
+                               onchange="updateLayerPrice(${index}, this.value)">
+                    </td>
                     <td>
                         <input type="number" value="${layer.thickness}" min="1" max="100" 
                                onchange="updateLayerThickness(${index}, this.value)">
@@ -654,8 +761,22 @@
             });
         }
 
+        function getLayerType(paintId) {
+            if (paintId.includes('primer')) return 'Primer';
+            if (paintId.includes('base')) return 'Base';
+            if (paintId.includes('top')) return 'Top';
+            
+            const paint = paintDB.find(p => p.id === paintId);
+            return paint ? paint.type : '-';
+        }
+
         function updateLayerPaint(index, paintId) {
             layers[index].paintId = paintId;
+            // Auto-set price based on paint type
+            const paint = paintDB.find(p => p.id === paintId);
+            if (paint && paint.ready_to_use_price) {
+                layers[index].readyToUsePrice = paint.ready_to_use_price;
+            }
             updateLayersTable();
         }
 
@@ -663,8 +784,11 @@
             layers[index].thickness = parseFloat(thickness) || 20;
         }
 
+        function updateLayerPrice(index, price) {
+            layers[index].readyToUsePrice = parseFloat(price) || 0.5;
+        }
+
         function updateLayerPaintOptions() {
-            // Update all layer paint dropdowns when DB changes
             setTimeout(() => {
                 updateLayersTable();
             }, 100);
@@ -677,25 +801,16 @@
 
             // Check if primer already exists
             const hasPrimer = layers.some(layer => {
-                const paint = paintDB.find(p => p.id === layer.paintId);
-                return paint && paint.type === 'Primer';
+                return getLayerType(layer.paintId) === 'Primer';
             });
 
             if (!hasPrimer) {
                 // Add primer as first layer
-                const primerPaint = paintDB.find(p => p.type === 'Primer') || {
-                    id: 'fallback-primer',
-                    name: 'Fallback Primer',
-                    type: 'Primer',
-                    sg: 1.10,
-                    price: 420
-                };
-
                 layers.unshift({
-                    paintId: primerPaint.id,
-                    thickness: 10
+                    paintId: 'preset-primer',
+                    thickness: 10,
+                    readyToUsePrice: 0.42
                 });
-
                 updateLayersTable();
             }
         }
@@ -707,13 +822,8 @@
         }
 
         function partsPerJig(partW, partH, jigW, jigH, gap, tryRotate) {
-            // Available area = jig size minus margins (gap on all sides)
             const availW = jigW - 2 * gap;
             const availH = jigH - 2 * gap;
-            
-            // Pattern calculation: how many parts fit in grid pattern
-            // cols = floor((availW + gap) / (partW + gap))
-            // rows = floor((availH + gap) / (partH + gap))
             
             function calculateLayout(pW, pH) {
                 if (pW + gap > availW + gap || pH + gap > availH + gap) return { count: 0, cols: 0, rows: 0 };
@@ -758,11 +868,8 @@
             const contentRows = Math.floor(jigH);
             for (let r = 0; r < contentRows; r++) {
                 let line = '|';
-                
-                // Add margin spaces
                 line += ' '.repeat(Math.floor(gap));
                 
-                // Add parts
                 for (let c = 0; c < cols && r < rows; c++) {
                     line += 'O';
                     if (c < cols - 1) {
@@ -770,16 +877,12 @@
                     }
                 }
                 
-                // Fill remaining width
                 const remaining = Math.floor(jigW * 2) - line.length + 1;
                 line += ' '.repeat(Math.max(0, remaining)) + '|';
                 layout += line + '\n';
             }
             
-            // Bottom border
             layout += '+' + '-'.repeat(Math.floor(jigW * 2)) + '+\n';
-            
-            // Footer info
             layout += `\nJig ${jigW}x${jigH} | Part ${displayW}x${displayH} | Gap ${gap} | ${rotated ? 'Rotated 90°' : 'Default'}`;
             
             return layout;
@@ -787,10 +890,7 @@
 
         // Main calculation function
         function calculate() {
-            // Add ripple effect to button
             addRippleEffect(document.getElementById('calculateBtn'));
-            
-            // Ensure primer for PP
             ensurePrimerForPP();
             
             // Get input values
@@ -812,45 +912,86 @@
             // Calculate layout
             const layout = partsPerJig(partW, partH, jigW, jigH, gap, tryRotate);
             
-            // Calculate paint consumption per part
+            // Calculate paint consumption per part using Ready-to-use prices
             let totalPaintPerPart = 0;
             let costBreakdownData = [];
             let totalCostPerPart = 0;
             
             layers.forEach(layer => {
-                const paint = paintDB.find(p => p.id === layer.paintId);
-                if (paint && layer.thickness > 0) {
-                    // Volume = Surface Area × thickness
-                    // 1 µm = 1e-4 cm, so thickness in cm = thickness_µm × 1e-4
+                if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
+                    // Volume = Surface Area × thickness (1 µm = 1e-4 cm)
                     const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
                     
-                    // Mass = Volume × SG (specific gravity)
-                    const massGrams = volumeCm3 * paint.sg;
+                    // Mass = Volume × 1.2 (average SG for ready-to-use paint)
+                    const massGrams = volumeCm3 * 1.2;
                     
                     // Add loss percentage
                     const massWithLoss = massGrams * (1 + lossPct / 100);
                     
                     totalPaintPerPart += massWithLoss;
                     
-                    // Cost calculation: (mass_g / 1000) × price_per_kg
-                    const layerCost = (massWithLoss / 1000) * paint.price;
+                    // Cost calculation using ready-to-use price (฿/g)
+                    const layerCost = massWithLoss * layer.readyToUsePrice;
                     totalCostPerPart += layerCost;
                     
+                    const paintName = layer.paintId.startsWith('preset-') ? 
+                        layer.paintId.replace('preset-', '').toUpperCase() : 
+                        (paintDB.find(p => p.id === layer.paintId)?.name || 'Unknown');
+                    
                     costBreakdownData.push({
-                        name: paint.name,
+                        name: paintName,
                         mass: massWithLoss,
                         cost: layerCost
                     });
                 }
             });
+
+            // Calculate cleaning materials cost
+            let cleaningCost = 0;
+            const autoClean = document.getElementById('autoCleaningCalc').checked;
+            
+            if (document.getElementById('usePM').checked) {
+                const pmPrice = parseFloat(document.getElementById('pmPrice').value) || 0.15;
+                let pmAmount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('pmAmount').value) || 0;
+                if (autoClean) document.getElementById('pmAmount').value = pmAmount.toFixed(1);
+                cleaningCost += pmAmount * pmPrice;
+                costBreakdownData.push({ name: 'PM Cleaner', mass: pmAmount, cost: pmAmount * pmPrice });
+            }
+            
+            if (document.getElementById('useP700').checked) {
+                const p700Price = parseFloat(document.getElementById('p700Price').value) || 0.18;
+                let p700Amount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('p700Amount').value) || 0;
+                if (autoClean) document.getElementById('p700Amount').value = p700Amount.toFixed(1);
+                cleaningCost += p700Amount * p700Price;
+                costBreakdownData.push({ name: 'P700 Cleaner', mass: p700Amount, cost: p700Amount * p700Price });
+            }
+            
+            if (document.getElementById('useIPA').checked) {
+                const ipaPrice = parseFloat(document.getElementById('ipaPrice').value) || 0.12;
+                let ipaAmount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('ipaAmount').value) || 0;
+                if (autoClean) document.getElementById('ipaAmount').value = ipaAmount.toFixed(1);
+                cleaningCost += ipaAmount * ipaPrice;
+                costBreakdownData.push({ name: 'IPA', mass: ipaAmount, cost: ipaAmount * ipaPrice });
+            }
+
+            totalCostPerPart += cleaningCost;
             
             // Calculate other KPIs
             const paintPerJig = totalPaintPerPart * layout.count;
             const ctPerPart = layout.count > 0 ? cycleTime / layout.count : 0;
             
+            // Store results for printing
+            calculationResults = {
+                partW, partH, partD, surfaceFactor, lossPct, jigW, jigH, gap, tryRotate, cycleTime,
+                surfaceArea, layout, totalPaintPerPart, paintPerJig, ctPerPart, totalCostPerPart,
+                costBreakdownData, currency,
+                calculationDate: new Date().toLocaleDateString('th-TH')
+            };
+            
             // Display results
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('resultsSection').classList.add('animate-in');
+            document.getElementById('printBtn').style.display = 'inline-block';
             
             // Animate counters
             animateCounter('partsPerJig', 0, layout.count, 0);
@@ -860,11 +1001,10 @@
             animateCounter('ctPerPart', 0, ctPerPart, 1);
             animateCounter('costPerPart', 0, totalCostPerPart, 2, currency);
             
-            // Update orientation tag
+            // Update displays
             document.getElementById('orientationTag').textContent = 
                 layout.rotated ? 'Rotated 90°' : 'Default Orientation';
             
-            // Update cost breakdown
             updateCostBreakdown(costBreakdownData, totalCostPerPart, currency);
             
             // Update ASCII layout with animation
@@ -885,14 +1025,12 @@
         // Animation functions
         function animateCounter(elementId, start, end, decimals = 0, prefix = '') {
             const element = document.getElementById(elementId);
-            const duration = 1500; // ms
+            const duration = 1500;
             const startTime = performance.now();
             
             function updateCounter(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing function (ease-out)
                 const easeOut = 1 - Math.pow(1 - progress, 3);
                 const currentValue = start + (end - start) * easeOut;
                 
@@ -902,7 +1040,6 @@
                     requestAnimationFrame(updateCounter);
                 }
             }
-            
             requestAnimationFrame(updateCounter);
         }
 
@@ -917,10 +1054,7 @@
             ripple.style.top = (rect.height / 2 - size / 2) + 'px';
             
             button.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
+            setTimeout(() => ripple.remove(), 600);
         }
 
         function updateCostBreakdown(breakdownData, totalCost, currency) {
@@ -937,39 +1071,111 @@
                 container.appendChild(div);
             });
             
-            // Total
             const totalDiv = document.createElement('div');
             totalDiv.className = 'breakdown-item';
             totalDiv.innerHTML = `
-                <span><strong>รวม</strong></span>
+                <span><strong>รวมทั้งหมด</strong></span>
                 <span><strong>${currency}${totalCost.toFixed(2)}</strong></span>
             `;
             container.appendChild(totalDiv);
         }
 
+        // Print/Export function
+        function printReport() {
+            if (!calculationResults) {
+                alert('กรุณาคำนวณก่อนพิมพ์');
+                return;
+            }
+
+            const printSection = document.getElementById('printSection');
+            const printContent = document.getElementById('printContent');
+            
+            document.getElementById('printDate').textContent = new Date().toLocaleDateString('th-TH');
+            document.getElementById('calcDate').textContent = calculationResults.calculationDate;
+            
+            printContent.innerHTML = `
+                <h2>PROJECT: NPD TEST</h2>
+                <table class="print-table">
+                    <tr><th>DESCRIPTION</th><th></th></tr>
+                    <tr><td>Customer: TOYOTA</td><td></td></tr>
+                    <tr><td>Part Name: PART A</td><td></td></tr>
+                    <tr><td>Part No: 000001-000000-A</td><td></td></tr>
+                    <tr><td>Material: ${document.getElementById('plasticType').value}</td><td></td></tr>
+                </table>
+
+                <h3>PART DIMENSIONS</h3>
+                <table class="print-table">
+                    <tr><th>W</th><th>L</th><th>H</th></tr>
+                    <tr><td>${calculationResults.partW}</td><td>${calculationResults.partH}</td><td>${calculationResults.partD}</td></tr>
+                </table>
+                <p>Surface Area: ${calculationResults.surfaceArea.toFixed(1)} cm²</p>
+
+                <h3>PAINT LAYERS</h3>
+                <table class="print-table">
+                    <thead>
+                        <tr><th>Layer</th><th>Type</th><th>Thickness (µm)</th><th>Price (฿/g)</th><th>Cost per Part</th></tr>
+                    </thead>
+                    <tbody>
+                        ${layers.map((layer, i) => {
+                            const cost = calculationResults.costBreakdownData.find(item => 
+                                item.name.includes(getLayerType(layer.paintId)) || 
+                                item.name.includes(layer.paintId.replace('preset-', '').toUpperCase())
+                            );
+                            return `<tr>
+                                <td>Layer ${i+1}</td>
+                                <td>${getLayerType(layer.paintId)}</td>
+                                <td>${layer.thickness}</td>
+                                <td>${layer.readyToUsePrice.toFixed(2)}</td>
+                                <td>${cost ? cost.cost.toFixed(2) : '0.00'}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+
+                <h3>JIG LAYOUT</h3>
+                <table class="print-table">
+                    <tr><th>Jig Size</th><td>${calculationResults.jigW} x ${calculationResults.jigH} cm</td></tr>
+                    <tr><th>Parts per Jig</th><td>${calculationResults.layout.count}</td></tr>
+                    <tr><th>Orientation</th><td>${calculationResults.layout.rotated ? 'Rotated 90°' : 'Default'}</td></tr>
+                    <tr><th>Cycle Time per Part</th><td>${calculationResults.ctPerPart.toFixed(1)} sec</td></tr>
+                </table>
+
+                <h3>COST SUMMARY</h3>
+                <table class="print-table">
+                    <tr><th>Item</th><th>Amount (g)</th><th>Cost (฿)</th></tr>
+                    ${calculationResults.costBreakdownData.map(item => 
+                        `<tr><td>${item.name}</td><td>${item.mass.toFixed(2)}</td><td>${item.cost.toFixed(2)}</td></tr>`
+                    ).join('')}
+                    <tr style="font-weight: bold;">
+                        <td>TOTAL COST PER PART</td>
+                        <td>-</td>
+                        <td>${calculationResults.totalCostPerPart.toFixed(2)}</td>
+                    </tr>
+                </table>
+            `;
+            
+            window.print();
+        }
+
         // Data loading functions
         async function loadExternalData() {
             try {
-                // Load paints.json
                 const paintsResponse = await fetch('paints.json', { cache: 'no-cache' });
                 if (paintsResponse.ok) {
                     const paintsData = await paintsResponse.json();
                     setDB(paintsData);
                 }
                 
-                // Load plastics.json
                 const plasticsResponse = await fetch('plastics.json', { cache: 'no-cache' });
                 if (plasticsResponse.ok) {
                     window.PLASTICS = await plasticsResponse.json();
                 }
                 
-                // Load cycle_times.json
                 const cycleResponse = await fetch('cycle_times.json', { cache: 'no-cache' });
                 if (cycleResponse.ok) {
                     const cycleData = await cycleResponse.json();
                     window.CT_PRESET = cycleData;
                     
-                    // Set default values from cycle_times.json
                     if (cycleData.defaults) {
                         const defaults = cycleData.defaults;
                         document.getElementById('cycleTime').value = defaults.jig || 120;
@@ -984,53 +1190,12 @@
                 }
                 
             } catch (error) {
-                console.warn('Failed to load external data files, using fallbacks:', error);
-                // Use fallback data
-                if (paintDB.length === 0) {
-                    setDB([
-                        { id: "base-white", name: "Base White", type: "Base", sg: 1.20, price: 500 },
-                        { id: "top-clear", name: "Top Clear", type: "Top", sg: 1.02, price: 720 }
-                    ]);
-                }
+                console.warn('Failed to load external data files:', error);
             }
-        }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    if (Array.isArray(data)) {
-                        // Assume it's paints data
-                        setDB(data);
-                        alert('นำเข้าข้อมูลสีเรียบร้อยแล้ว');
-                    } else if (data.paints) {
-                        setDB(data.paints);
-                        alert('นำเข้าข้อมูลสีเรียบร้อยแล้ว');
-                    }
-                    
-                    if (data.plastics) {
-                        window.PLASTICS = data.plastics;
-                    }
-                    
-                    if (data.cycle_times) {
-                        window.CT_PRESET = data.cycle_times;
-                    }
-                    
-                } catch (error) {
-                    alert('ไฟล์ JSON ไม่ถูกต้อง: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
         }
 
         function resetAll() {
             if (confirm('ต้องการรีเซ็ตข้อมูลทั้งหมดหรือไม่?')) {
-                // Reset form values
                 document.getElementById('partWidth').value = '10';
                 document.getElementById('partHeight').value = '5';
                 document.getElementById('partDepth').value = '2';
@@ -1043,19 +1208,16 @@
                 document.getElementById('tryRotate').checked = false;
                 document.getElementById('plasticType').selectedIndex = 0;
                 
-                // Clear layers
                 layers = [];
                 updateLayersTable();
                 
-                // Hide results
                 document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('printBtn').style.display = 'none';
                 
-                // Clear image
                 document.getElementById('partImage').value = '';
                 document.getElementById('imagePreview').style.display = 'none';
                 
-                // Clear paint DB
-                clearDB();
+                calculationResults = null;
             }
         }
     </script>
