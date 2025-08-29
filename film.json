@@ -1,0 +1,52 @@
+[
+  {
+    "id": "i206",
+    "name": "I206",
+    "width": 60,
+    "manufacturer": "Standard Films",
+    "price": 12.5,
+    "activator_compatible": ["dmp-before", "yht-before"],
+    "pattern": "Plain",
+    "notes": "Standard transfer film"
+  },
+  {
+    "id": "i210",
+    "name": "I210",
+    "width": 60,
+    "manufacturer": "Standard Films",
+    "price": 15.0,
+    "activator_compatible": ["dmp-before", "yht-before"],
+    "pattern": "Fine Texture",
+    "notes": "Textured surface film"
+  },
+  {
+    "id": "wood-grain-oak",
+    "name": "Wood Grain Oak",
+    "width": 60,
+    "manufacturer": "Premium Patterns",
+    "price": 18.5,
+    "activator_compatible": ["yht-before", "yht-after"],
+    "pattern": "Wood Grain",
+    "notes": "Oak wood pattern"
+  },
+  {
+    "id": "carbon-fiber",
+    "name": "Carbon Fiber Pattern",
+    "width": 60,
+    "manufacturer": "Premium Patterns",
+    "price": 22.0,
+    "activator_compatible": ["yht-before", "yht-after"],
+    "pattern": "Carbon Fiber",
+    "notes": "Carbon fiber texture"
+  },
+  {
+    "id": "marble-white",
+    "name": "White Marble Pattern",
+    "width": 60,
+    "manufacturer": "Luxury Patterns",
+    "price": 25.0,
+    "activator_compatible": ["yht-after"],
+    "pattern": "Marble",
+    "notes": "White marble texture"
+  }
+]
