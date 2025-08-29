@@ -152,6 +152,11 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -179,10 +184,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .saved-paints {
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -196,6 +203,7 @@
             margin: 5px 0;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .saved-paint-item:hover {
@@ -209,6 +217,19 @@
             color: #b0b8c4;
             font-size: 0.9rem;
             grid-column: 1 / -1;
+        }
+
+        .export-section {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -323,6 +344,19 @@
             <div class="saved-paints" id="savedPaints">
                 <!-- Saved paints will be displayed here -->
             </div>
+
+            <!-- Export/Import Section -->
+            <div class="export-section">
+                <h3 style="color: #3b82f6; margin-bottom: 10px;">📦 สำรองข้อมูล</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary" onclick="exportPaintData()">📥 Export สีทั้งหมด</button>
+                    <input type="file" id="importPaintFile" accept=".json" style="display: none;" onchange="importPaintData(event)">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('importPaintFile').click()">📤 Import สี</button>
+                </div>
+                <small style="color: #93c5fd; display: block; margin-top: 5px;">
+                    Export ข้อมูลเป็นไฟล์เพื่อสำรองหรือแชร์กับเครื่องอื่น
+                </small>
+            </div>
         </div>
 
         <!-- Footer -->
@@ -333,15 +367,47 @@
 
     <script>
         let additionalComponents = [];
+        let paintDB = [];
 
         document.addEventListener('DOMContentLoaded', function() {
             checkUserLogin();
-            displaySavedPaints();
+            loadPaints();
         });
 
         function checkUserLogin() {
             const user = JSON.parse(localStorage.getItem('currentUser') || '{"username":"guest","role":"user"}');
             document.getElementById('userInfo').textContent = `ผู้ใช้: ${user.username} (${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทั่วไป'})`;
+        }
+
+        // ✅ แก้ไข function loadPaints() - โหลด localStorage ก่อน
+        async function loadPaints() {
+            // ตรวจสอบข้อมูลใน localStorage ก่อน
+            const storedPaints = localStorage.getItem('paintDB_v1');
+            
+            if (storedPaints && storedPaints !== '[]') {
+                // ถ้ามีข้อมูลใน localStorage แล้ว ให้ใช้ข้อมูลนั้น
+                paintDB = JSON.parse(storedPaints);
+                console.log('🎨 Loaded paints from localStorage:', paintDB.length, 'items');
+                displaySavedPaints();
+            } else {
+                // ถ้าไม่มี ให้โหลดจาก paints.json (ครั้งแรกเท่านั้น)
+                try {
+                    const response = await fetch('paints.json', { cache: 'no-cache' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        paintDB = data;
+                        localStorage.setItem('paintDB_v1', JSON.stringify(data));
+                        console.log('📂 Loaded paints from paints.json:', paintDB.length, 'items');
+                    } else {
+                        paintDB = [];
+                        console.log('⚠️ No paints.json found, using empty array');
+                    }
+                } catch (error) {
+                    console.warn('❌ Could not load paints.json:', error.message);
+                    paintDB = [];
+                }
+                displaySavedPaints();
+            }
         }
 
         function addAdditionalComponent() {
@@ -352,10 +418,10 @@
             const div = document.createElement('div');
             div.className = 'addition-item';
             div.innerHTML = `
-                <input type="text" placeholder="ชื่อสารปรุงแต่ง" onchange="updateAddition(${id}, 'name', this.value)" style="flex: 2; margin-right: 10px;">
-                <input type="number" placeholder="ราคา ฿/กก." step="0.01" onchange="updateAddition(${id}, 'price', this.value)" style="flex: 1; margin-right: 10px;">
-                <input type="number" placeholder="สัดส่วน" step="0.1" onchange="updateAddition(${id}, 'ratio', this.value)" style="flex: 1; margin-right: 10px;">
-                <button type="button" class="btn btn-secondary" onclick="removeAddition(${id})" style="padding: 8px;">ลบ</button>
+                <input type="text" placeholder="ชื่อสารปรุงแต่ง" onchange="updateAddition(${id}, 'name', this.value)" style="flex: 2;">
+                <input type="number" placeholder="ราคา ฿/กก." step="0.01" onchange="updateAddition(${id}, 'price', this.value)" style="flex: 1;">
+                <input type="number" placeholder="สัดส่วน" step="0.1" onchange="updateAddition(${id}, 'ratio', this.value)" style="flex: 1;">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeAddition(${id})">ลบ</button>
             `;
             container.appendChild(div);
         }
@@ -376,10 +442,10 @@
                 const div = document.createElement('div');
                 div.className = 'addition-item';
                 div.innerHTML = `
-                    <input type="text" value="${comp.name}" onchange="updateAddition(${comp.id}, 'name', this.value)" style="flex: 2; margin-right: 10px;">
-                    <input type="number" value="${comp.price}" step="0.01" onchange="updateAddition(${comp.id}, 'price', this.value)" style="flex: 1; margin-right: 10px;">
-                    <input type="number" value="${comp.ratio}" step="0.1" onchange="updateAddition(${comp.id}, 'ratio', this.value)" style="flex: 1; margin-right: 10px;">
-                    <button type="button" class="btn btn-secondary" onclick="removeAddition(${comp.id})" style="padding: 8px;">ลบ</button>
+                    <input type="text" value="${comp.name}" onchange="updateAddition(${comp.id}, 'name', this.value)" style="flex: 2;">
+                    <input type="number" value="${comp.price}" step="0.01" onchange="updateAddition(${comp.id}, 'price', this.value)" style="flex: 1;">
+                    <input type="number" value="${comp.ratio}" step="0.1" onchange="updateAddition(${comp.id}, 'ratio', this.value)" style="flex: 1;">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeAddition(${comp.id})">ลบ</button>
                 `;
                 container.appendChild(div);
             });
@@ -463,6 +529,7 @@
             document.getElementById('mixturBreakdown').innerHTML = breakdown;
         }
 
+        // ✅ ปรับปรุง function savePaintToDB()
         function savePaintToDB() {
             const paintName = document.getElementById('paintName').value.trim();
             const hardenerName = document.getElementById('hardenerName').value.trim();
@@ -478,7 +545,8 @@
             
             const costPerGram = parseFloat(resultElement.textContent.replace(' ฿/g', ''));
             
-            let paintDB = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+            // โหลดข้อมูลปัจจุบันจาก localStorage
+            let currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
             
             let finalName = paintName;
             if (modelUsage) {
@@ -505,20 +573,31 @@
                 },
                 model_usage: modelUsage,
                 additional_components: [...additionalComponents],
-                created_date: new Date().toISOString()
+                created_date: new Date().toISOString(),
+                created_by: JSON.parse(localStorage.getItem('currentUser') || '{"username":"guest"}').username
             };
             
-            paintDB.push(newPaint);
-            localStorage.setItem('paintDB_v1', JSON.stringify(paintDB));
+            // เพิ่มข้อมูลใหม่
+            currentPaints.push(newPaint);
+            paintDB = currentPaints;
             
+            // บันทึกกลับไปที่ localStorage
+            localStorage.setItem('paintDB_v1', JSON.stringify(currentPaints));
+            
+            console.log('✅ Paint saved successfully. Total paints:', currentPaints.length);
             alert('บันทึกสีลงฐานข้อมูลเรียบร้อยแล้ว');
             displaySavedPaints();
         }
 
+        // ✅ ปรับปรุง function displaySavedPaints()
         function displaySavedPaints() {
             const container = document.getElementById('savedPaints');
-            const paintDB = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
-            const mixedPaints = paintDB.filter(p => p.ready_to_use_price);
+            
+            // โหลดข้อมูลล่าสุดจาก localStorage
+            const currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+            const mixedPaints = currentPaints.filter(p => p.ready_to_use_price);
+            
+            console.log('📄 Displaying saved paints:', mixedPaints.length, 'items');
             
             if (mixedPaints.length === 0) {
                 container.innerHTML = '<p style="color: #b0b8c4; text-align: center;">ยังไม่มีสีที่บันทึก</p>';
@@ -526,21 +605,31 @@
             }
             
             container.innerHTML = mixedPaints.map(paint => `
-                <div class="saved-paint-item" onclick="loadSavedPaint('${paint.id}')">
-                    <strong>${paint.name}</strong> (${paint.type})
-                    <br>
-                    <small>ราคา: ${paint.ready_to_use_price.toFixed(4)} ฿/g | สัดส่วน: ${paint.mixing_ratio}</small>
-                    ${paint.model_usage ? `<br><small>Model: ${paint.model_usage}</small>` : ''}
+                <div class="saved-paint-item">
+                    <div onclick="loadSavedPaint('${paint.id}')" style="cursor: pointer; padding-right: 40px;">
+                        <strong>${paint.name}</strong> (${paint.type})
+                        <br>
+                        <small>ราคา: ${paint.ready_to_use_price.toFixed(4)} ฿/g | สัดส่วน: ${paint.mixing_ratio}</small>
+                        ${paint.model_usage ? `<br><small>Model: ${paint.model_usage}</small>` : ''}
+                        <br><small style="color: #4fd1c7;">บันทึกเมื่อ: ${new Date(paint.created_date).toLocaleDateString('th-TH')}</small>
+                        ${paint.created_by ? `<br><small style="color: #fbbf24;">โดย: ${paint.created_by}</small>` : ''}
+                    </div>
+                    ${paint.id.startsWith('mixed-') ? `
+                        <button onclick="deleteSavedPaint('${paint.id}')" 
+                                style="position: absolute; top: 5px; right: 5px; background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                            ลบ
+                        </button>
+                    ` : ''}
                 </div>
             `).join('');
         }
 
         function loadSavedPaint(paintId) {
-            const paintDB = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
-            const paint = paintDB.find(p => p.id === paintId);
+            const currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+            const paint = currentPaints.find(p => p.id === paintId);
             
             if (paint) {
-                document.getElementById('paintName').value = paint.paint_component?.name || paint.name;
+                document.getElementById('paintName').value = paint.paint_component?.name || paint.name.replace(/ for .*$/, '');
                 document.getElementById('hardenerName').value = paint.hardener_component?.name || '';
                 document.getElementById('thinnerName').value = paint.thinner_component?.name || '';
                 document.getElementById('paintCategory').value = paint.type;
@@ -566,6 +655,19 @@
             }
         }
 
+        // ✅ เพิ่ม function สำหรับลบสี
+        function deleteSavedPaint(paintId) {
+            if (confirm('ต้องการลบสีนี้หรือไม่?')) {
+                let currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+                currentPaints = currentPaints.filter(p => p.id !== paintId);
+                paintDB = currentPaints;
+                localStorage.setItem('paintDB_v1', JSON.stringify(currentPaints));
+                displaySavedPaints();
+                alert('ลบสีเรียบร้อยแล้ว');
+                console.log('🗑️ Paint deleted. Remaining paints:', currentPaints.length);
+            }
+        }
+
         function renderAdditionalComponents() {
             const container = document.getElementById('additionalComponents');
             container.innerHTML = '';
@@ -574,13 +676,74 @@
                 const div = document.createElement('div');
                 div.className = 'addition-item';
                 div.innerHTML = `
-                    <input type="text" value="${comp.name}" onchange="updateAddition(${comp.id}, 'name', this.value)" style="flex: 2; margin-right: 10px;">
-                    <input type="number" value="${comp.price}" step="0.01" onchange="updateAddition(${comp.id}, 'price', this.value)" style="flex: 1; margin-right: 10px;">
-                    <input type="number" value="${comp.ratio}" step="0.1" onchange="updateAddition(${comp.id}, 'ratio', this.value)" style="flex: 1; margin-right: 10px;">
-                    <button type="button" class="btn btn-secondary" onclick="removeAddition(${comp.id})" style="padding: 8px;">ลบ</button>
+                    <input type="text" value="${comp.name}" onchange="updateAddition(${comp.id}, 'name', this.value)" style="flex: 2;">
+                    <input type="number" value="${comp.price}" step="0.01" onchange="updateAddition(${comp.id}, 'price', this.value)" style="flex: 1;">
+                    <input type="number" value="${comp.ratio}" step="0.1" onchange="updateAddition(${comp.id}, 'ratio', this.value)" style="flex: 1;">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeAddition(${comp.id})">ลบ</button>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        // ✅ Export/Import Functions
+        function exportPaintData() {
+            const currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+            if (currentPaints.length === 0) {
+                alert('ไม่มีข้อมูลสีให้ Export');
+                return;
+            }
+            
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                totalPaints: currentPaints.length,
+                paints: currentPaints,
+                version: "1.0"
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', `my-paints-${new Date().toISOString().slice(0,10)}.json`);
+            linkElement.click();
+            
+            alert(`Export ข้อมูล ${currentPaints.length} สีเรียบร้อย!`);
+            console.log('📤 Exported', currentPaints.length, 'paints');
+        }
+
+        function importPaintData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (importedData.paints && Array.isArray(importedData.paints)) {
+                        if (confirm(`ต้องการ Import สี ${importedData.paints.length} สูตรหรือไม่?\n(จะเพิ่มเข้าไปในข้อมูลเดิม ไม่แทนที่)`)) {
+                            const currentPaints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+                            const combinedPaints = [...currentPaints, ...importedData.paints];
+                            
+                            localStorage.setItem('paintDB_v1', JSON.stringify(combinedPaints));
+                            paintDB = combinedPaints;
+                            displaySavedPaints();
+                            
+                            alert(`Import สำเร็จ! เพิ่มสี ${importedData.paints.length} สูตร\nรวมทั้งหมด ${combinedPaints.length} สูตร`);
+                            console.log('📥 Imported', importedData.paints.length, 'paints. Total:', combinedPaints.length);
+                        }
+                    } else {
+                        alert('รูปแบบไฟล์ไม่ถูกต้อง - ต้องเป็นไฟล์ Export จากระบบนี้');
+                    }
+                } catch (error) {
+                    alert('ไฟล์เสียหาย หรือรูปแบบไม่ถูกต้อง: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
         }
 
         function clearForm() {
