@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint Mixer Calculator</title>
+    <title>คำนวณสีผสม (Ready to Use)</title>
     <style>
         * {
             margin: 0;
@@ -201,6 +201,15 @@
         .saved-paint-item:hover {
             background: rgba(79, 209, 199, 0.2);
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #b0b8c4;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
     </style>
 </head>
 <body>
@@ -209,6 +218,8 @@
         <div class="nav-links">
             <a href="index.html" class="nav-link">หน้าหลัก</a>
             <a href="paint-mixer.html" class="nav-link active">คำนวณสีผสม</a>
+            <a href="film-calculator.html" class="nav-link">คำนวณ Film & Activator</a>
+            <a href="cost-history.html" class="nav-link">รายการ Cost ที่ทำแล้ว</a>
             <a href="data-manager.html" class="nav-link">จัดการข้อมูล</a>
             <a href="login.html" class="nav-link">เข้าสู่ระบบ</a>
         </div>
@@ -222,8 +233,18 @@
         <div class="card">
             <h2>ข้อมูลสี</h2>
             <div class="form-group">
-                <label for="paintName">ชื่อสี</label>
+                <label for="paintName">ชื่อสี (Paint)</label>
                 <input type="text" id="paintName" placeholder="เช่น Base White Metallic">
+            </div>
+            
+            <div class="form-group">
+                <label for="hardenerName">ชื่อ Hardener</label>
+                <input type="text" id="hardenerName" placeholder="เช่น Hardener Type A">
+            </div>
+            
+            <div class="form-group">
+                <label for="thinnerName">ชื่อ Thinner</label>
+                <input type="text" id="thinnerName" placeholder="เช่น Thinner Standard">
             </div>
             
             <div class="form-group">
@@ -237,10 +258,15 @@
             </div>
             
             <div class="form-group">
-                <label for="mixingRatio">สัดส่วนผสม (A:B:C)</label>
+                <label for="modelUsage">ใช้กับ Model (ไม่บังคับ)</label>
+                <input type="text" id="modelUsage" placeholder="เช่น Model 650A">
+            </div>
+            
+            <div class="form-group">
+                <label for="mixingRatio">สัดส่วนผสม (Paint:Hardener:Thinner)</label>
                 <input type="text" id="mixingRatio" placeholder="100:20:60" value="100:20:60">
                 <small style="color: #b0b8c4; display: block; margin-top: 5px;">
-                    รูปแบบ: สี(A):แข็งตัว(B):ทินเนอร์(C)
+                    รูปแบบ: สี(Paint):แข็งตัว(Hardener):ทินเนอร์(Thinner)
                 </small>
             </div>
         </div>
@@ -249,17 +275,17 @@
         <div class="card">
             <h2>ราคาส่วนประกอบ</h2>
             <div class="form-group">
-                <label for="priceA">ราคาสี (A) - ฿/กก.</label>
+                <label for="priceA">ราคา Paint - ฿/กก.</label>
                 <input type="number" id="priceA" step="0.01" value="800">
             </div>
             
             <div class="form-group">
-                <label for="priceB">ราคาแข็งตัว (B) - ฿/กก.</label>
+                <label for="priceB">ราคา Hardener - ฿/กก.</label>
                 <input type="number" id="priceB" step="0.01" value="1200">
             </div>
             
             <div class="form-group">
-                <label for="priceC">ราคาทินเนอร์ (C) - ฿/กก.</label>
+                <label for="priceC">ราคา Thinner - ฿/กก.</label>
                 <input type="number" id="priceC" step="0.01" value="150">
             </div>
 
@@ -283,7 +309,7 @@
         <!-- Results -->
         <div class="card result-card" id="resultsCard" style="display: none;">
             <h2>ผลการคำนวณ</h2>
-            <div class="result-value" id="resultValue">0.00 ฿/g</div>
+            <div class="result-value" id="resultValue">0.0000 ฿/g</div>
             <div id="mixturBreakdown"></div>
             
             <p style="text-align: center; color: #b0b8c4; margin-top: 15px;">
@@ -297,6 +323,11 @@
             <div class="saved-paints" id="savedPaints">
                 <!-- Saved paints will be displayed here -->
             </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2025 bunnamchai.bu2025 - สงวนลิขสิทธิ์
         </div>
     </div>
 
@@ -341,7 +372,6 @@
             const container = document.getElementById('additionalComponents');
             container.innerHTML = '';
             
-            // Re-render all components
             additionalComponents.forEach(comp => {
                 const div = document.createElement('div');
                 div.className = 'addition-item';
@@ -356,35 +386,35 @@
         }
 
         function parseMixingRatio(ratioString) {
-            // Parse "100:20:60" format
             const parts = ratioString.split(':').map(part => parseFloat(part.trim()) || 0);
             return {
-                A: parts[0] || 100,
-                B: parts[1] || 0,
-                C: parts[2] || 0
+                paint: parts[0] || 100,
+                hardener: parts[1] || 0,
+                thinner: parts[2] || 0
             };
         }
 
         function calculateMixture() {
             const paintName = document.getElementById('paintName').value.trim();
+            const hardenerName = document.getElementById('hardenerName').value.trim();
+            const thinnerName = document.getElementById('thinnerName').value.trim();
             const category = document.getElementById('paintCategory').value;
+            const modelUsage = document.getElementById('modelUsage').value.trim();
             const ratioString = document.getElementById('mixingRatio').value;
             const priceA = parseFloat(document.getElementById('priceA').value) || 0;
             const priceB = parseFloat(document.getElementById('priceB').value) || 0;
             const priceC = parseFloat(document.getElementById('priceC').value) || 0;
 
             if (!paintName) {
-                alert('กรุณาใส่ชื่อสี');
+                alert('กรุณาใส่ชื่อสี (Paint)');
                 return;
             }
 
             const ratio = parseMixingRatio(ratioString);
             
-            // Calculate total parts and weighted cost
-            let totalParts = ratio.A + ratio.B + ratio.C;
-            let totalCost = (ratio.A * priceA + ratio.B * priceB + ratio.C * priceC);
+            let totalParts = ratio.paint + ratio.hardener + ratio.thinner;
+            let totalCost = (ratio.paint * priceA + ratio.hardener * priceB + ratio.thinner * priceC);
             
-            // Add additional components
             additionalComponents.forEach(comp => {
                 if (comp.ratio > 0 && comp.price > 0) {
                     totalParts += comp.ratio;
@@ -392,23 +422,25 @@
                 }
             });
             
-            // Calculate cost per gram (price per kg / 1000)
             const costPerKg = totalCost / totalParts;
             const costPerGram = costPerKg / 1000;
             
-            // Display results
             document.getElementById('resultsCard').style.display = 'block';
             document.getElementById('resultValue').textContent = costPerGram.toFixed(4) + ' ฿/g';
             
-            // Show breakdown
+            let finalName = paintName;
+            if (modelUsage) {
+                finalName += ` for ${modelUsage}`;
+            }
+            
             let breakdown = `
                 <h3>รายละเอียดการคำนวณ</h3>
                 <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>สัดส่วน:</strong> A:${ratio.A} | B:${ratio.B} | C:${ratio.C}</p>
-                    <p><strong>ต้นทุนถ่วงน้ำหนัก:</strong></p>
-                    <p>• สี (A): ${ratio.A} ส่วน × ${priceA} ฿/กก. = ${(ratio.A * priceA).toFixed(2)} ฿</p>
-                    <p>• แข็งตัว (B): ${ratio.B} ส่วน × ${priceB} ฿/กก. = ${(ratio.B * priceB).toFixed(2)} ฿</p>
-                    <p>• ทินเนอร์ (C): ${ratio.C} ส่วน × ${priceC} ฿/กก. = ${(ratio.C * priceC).toFixed(2)} ฿</p>
+                    <p><strong>สูตรสี:</strong> ${finalName}</p>
+                    <p><strong>ส่วนประกอบ:</strong></p>
+                    <p>• Paint (${paintName}): ${ratio.paint} ส่วน × ${priceA} ฿/กก. = ${(ratio.paint * priceA).toFixed(2)} ฿</p>
+                    <p>• Hardener (${hardenerName || 'Standard'}): ${ratio.hardener} ส่วน × ${priceB} ฿/กก. = ${(ratio.hardener * priceB).toFixed(2)} ฿</p>
+                    <p>• Thinner (${thinnerName || 'Standard'}): ${ratio.thinner} ส่วน × ${priceC} ฿/กก. = ${(ratio.thinner * priceC).toFixed(2)} ฿</p>
             `;
             
             if (additionalComponents.length > 0) {
@@ -424,7 +456,7 @@
                     <hr style="margin: 10px 0; border: 1px solid rgba(255,255,255,0.2);">
                     <p><strong>รวม:</strong> ${totalParts} ส่วน = ${totalCost.toFixed(2)} ฿</p>
                     <p><strong>ราคาต่อกิโลกรัม:</strong> ${costPerKg.toFixed(2)} ฿/กก.</p>
-                    <p><strong>ราคาต่อกรัม:</strong> ${costPerGram.toFixed(4)} ฿/g</p>
+                    <p><strong>ราคาต่อกรัม (Ready to Use):</strong> ${costPerGram.toFixed(4)} ฿/g</p>
                 </div>
             `;
             
@@ -433,30 +465,45 @@
 
         function savePaintToDB() {
             const paintName = document.getElementById('paintName').value.trim();
+            const hardenerName = document.getElementById('hardenerName').value.trim();
+            const thinnerName = document.getElementById('thinnerName').value.trim();
             const category = document.getElementById('paintCategory').value;
+            const modelUsage = document.getElementById('modelUsage').value.trim();
             const resultElement = document.getElementById('resultValue');
             
-            if (!paintName || resultElement.textContent === '0.00 ฿/g') {
+            if (!paintName || resultElement.textContent === '0.0000 ฿/g') {
                 alert('กรุณาคำนวณก่อนบันทึก');
                 return;
             }
             
             const costPerGram = parseFloat(resultElement.textContent.replace(' ฿/g', ''));
             
-            // Get existing paint DB
             let paintDB = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
+            
+            let finalName = paintName;
+            if (modelUsage) {
+                finalName += ` for ${modelUsage}`;
+            }
             
             const newPaint = {
                 id: `mixed-${Date.now()}`,
-                name: paintName,
+                name: finalName,
                 type: category,
                 ready_to_use_price: costPerGram,
                 mixing_ratio: document.getElementById('mixingRatio').value,
-                component_prices: {
-                    A: parseFloat(document.getElementById('priceA').value),
-                    B: parseFloat(document.getElementById('priceB').value),
-                    C: parseFloat(document.getElementById('priceC').value)
+                paint_component: {
+                    name: paintName,
+                    price: parseFloat(document.getElementById('priceA').value)
                 },
+                hardener_component: {
+                    name: hardenerName || 'Standard Hardener',
+                    price: parseFloat(document.getElementById('priceB').value)
+                },
+                thinner_component: {
+                    name: thinnerName || 'Standard Thinner',
+                    price: parseFloat(document.getElementById('priceC').value)
+                },
+                model_usage: modelUsage,
                 additional_components: [...additionalComponents],
                 created_date: new Date().toISOString()
             };
@@ -483,6 +530,7 @@
                     <strong>${paint.name}</strong> (${paint.type})
                     <br>
                     <small>ราคา: ${paint.ready_to_use_price.toFixed(4)} ฿/g | สัดส่วน: ${paint.mixing_ratio}</small>
+                    ${paint.model_usage ? `<br><small>Model: ${paint.model_usage}</small>` : ''}
                 </div>
             `).join('');
         }
@@ -492,14 +540,21 @@
             const paint = paintDB.find(p => p.id === paintId);
             
             if (paint) {
-                document.getElementById('paintName').value = paint.name;
+                document.getElementById('paintName').value = paint.paint_component?.name || paint.name;
+                document.getElementById('hardenerName').value = paint.hardener_component?.name || '';
+                document.getElementById('thinnerName').value = paint.thinner_component?.name || '';
                 document.getElementById('paintCategory').value = paint.type;
+                document.getElementById('modelUsage').value = paint.model_usage || '';
                 document.getElementById('mixingRatio').value = paint.mixing_ratio;
                 
-                if (paint.component_prices) {
-                    document.getElementById('priceA').value = paint.component_prices.A;
-                    document.getElementById('priceB').value = paint.component_prices.B;
-                    document.getElementById('priceC').value = paint.component_prices.C;
+                if (paint.paint_component) {
+                    document.getElementById('priceA').value = paint.paint_component.price;
+                }
+                if (paint.hardener_component) {
+                    document.getElementById('priceB').value = paint.hardener_component.price;
+                }
+                if (paint.thinner_component) {
+                    document.getElementById('priceC').value = paint.thinner_component.price;
                 }
                 
                 if (paint.additional_components) {
@@ -530,6 +585,9 @@
 
         function clearForm() {
             document.getElementById('paintName').value = '';
+            document.getElementById('hardenerName').value = '';
+            document.getElementById('thinnerName').value = '';
+            document.getElementById('modelUsage').value = '';
             document.getElementById('mixingRatio').value = '100:20:60';
             document.getElementById('priceA').value = '800';
             document.getElementById('priceB').value = '1200';
