@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #e0e6ed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4fd1c7;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b8c4;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e6ed;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4fd1c7;
+            box-shadow: 0 0 10px rgba(79, 209, 199, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4fd1c7, #3b82f6);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-status {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .error-message {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .back-link {
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #4fd1c7;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .default-credentials {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>🔐 เข้าสู่ระบบ</h1>
+        
+        <div class="default-credentials">
+            <strong>บัญชีเริ่มต้น:</strong><br>
+            Username: namchai1<br>
+            Password: namchai1<br>
+            <em>(ผู้ดูแลระบบ)</em>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">ชื่อผู้ใช้</label>
+                <input type="text" id="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">รหัสผ่าน</label>
+                <input type="password" id="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+            <button type="button" class="btn btn-secondary" onclick="loginAsGuest()">ใช้งานแบบผู้เยี่ยมชม</button>
+        </form>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        
+        <div id="userStatus" class="user-status">
+            <p><strong>เข้าสู่ระบบแล้ว</strong></p>
+            <p id="currentUserInfo"></p>
+            <button type="button" class="btn btn-secondary" onclick="logout()" style="margin-top: 15px;">ออกจากระบบ</button>
+        </div>
+        
+        <div class="back-link">
+            <a href="index.html">← กลับสู่หน้าหลัก</a>
+        </div>
+    </div>
+
+    <script>
+        // Initialize default users
+        function initializeUsers() {
+            let users = JSON.parse(localStorage.getItem('systemUsers') || '[]');
+            if (users.length === 0) {
+                users = [{
+                    username: 'namchai1',
+                    password: 'namchai1',
+                    role: 'admin',
+                    created_date: new Date().toISOString()
+                }];
+                localStorage.setItem('systemUsers', JSON.stringify(users));
+            }
+            return users;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUsers();
+            checkCurrentUser();
+            
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                login();
+            });
+        });
+
+        function checkCurrentUser() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (currentUser && currentUser.username !== 'guest') {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('userStatus').style.display = 'block';
+                document.getElementById('currentUserInfo').textContent = 
+                    `ผู้ใช้: ${currentUser.username} | สิทธิ์: ${currentUser.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}`;
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            const users = JSON.parse(localStorage.getItem('systemUsers') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify({
+                    username: user.username,
+                    role: user.role,
+                    loginTime: new Date().toISOString()
+                }));
+                
+                errorDiv.style.display = 'none';
+                alert('เข้าสู่ระบบสำเร็จ');
+                
+                // Redirect to appropriate page
+                if (user.role === 'admin') {
+                    window.location.href = 'data-manager.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                errorDiv.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function loginAsGuest() {
+            localStorage.setItem('currentUser', JSON.stringify({
+                username: 'guest',
+                role: 'user',
+                loginTime: new Date().toISOString()
+            }));
+            
+            alert('เข้าใช้งานแบบผู้เยี่ยมชม');
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
