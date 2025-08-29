@@ -127,13 +127,23 @@
             text-decoration: underline;
         }
 
-        .default-credentials {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #b0b8c4;
+            font-size: 0.9rem;
+        }
+
+        .info-text {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 0.9rem;
+            color: #93c5fd;
         }
     </style>
 </head>
@@ -141,11 +151,10 @@
     <div class="login-container">
         <h1>🔐 เข้าสู่ระบบ</h1>
         
-        <div class="default-credentials">
-            <strong>บัญชีเริ่มต้น:</strong><br>
-            Username: namchai1<br>
-            Password: namchai1<br>
-            <em>(ผู้ดูแลระบบ)</em>
+        <div class="info-text">
+            <strong>ข้อมูล:</strong><br>
+            ระบบมีผู้ใช้ 2 ระดับ - ผู้ใช้ทั่วไปและผู้ดูแลระบบ<br>
+            หากไม่มีบัญชี สามารถใช้งานแบบผู้เยี่ยมชมได้
         </div>
         
         <form id="loginForm">
@@ -174,6 +183,10 @@
         <div class="back-link">
             <a href="index.html">← กลับสู่หน้าหลัก</a>
         </div>
+    </div>
+
+    <div class="footer">
+        © 2025 bunnamchai.bu2025 - สงวนลิขสิทธิ์
     </div>
 
     <script>
