@@ -1,0 +1,52 @@
+[
+  {
+    "id": "dmp-before",
+    "name": "DMP Type Before",
+    "type": "Before",
+    "manufacturer": "Standard Chemical",
+    "price": 0.25,
+    "compatible_films": ["i206", "i210", "wood-grain-oak", "carbon-fiber"],
+    "application_temp": "20-25°C",
+    "notes": "Standard activator for before application"
+  },
+  {
+    "id": "yht-before",
+    "name": "YHT Type Before",
+    "type": "Before",
+    "manufacturer": "Premium Chemical",
+    "price": 0.30,
+    "compatible_films": ["i206", "i210", "wood-grain-oak", "carbon-fiber"],
+    "application_temp": "18-28°C",
+    "notes": "Premium activator for before application"
+  },
+  {
+    "id": "yht-after",
+    "name": "YHT Type After",
+    "type": "After",
+    "manufacturer": "Premium Chemical",
+    "price": 0.28,
+    "compatible_films": ["wood-grain-oak", "carbon-fiber", "marble-white"],
+    "application_temp": "15-30°C",
+    "notes": "Premium activator for after application"
+  },
+  {
+    "id": "eco-before",
+    "name": "ECO Type Before",
+    "type": "Before",
+    "manufacturer": "Eco Chemical",
+    "price": 0.22,
+    "compatible_films": ["i206", "i210"],
+    "application_temp": "22-26°C",
+    "notes": "Environmentally friendly activator"
+  },
+  {
+    "id": "rapid-dry",
+    "name": "Rapid Dry Activator",
+    "type": "Before",
+    "manufacturer": "Fast Chemical",
+    "price": 0.35,
+    "compatible_films": ["carbon-fiber", "marble-white"],
+    "application_temp": "20-25°C",
+    "notes": "Fast drying activator for production efficiency"
+  }
+]
