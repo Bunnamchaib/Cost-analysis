@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint Costing Calculator - Main</title>
+    <title>Pre cost Analysis NPD</title>
     <style>
         * {
             margin: 0;
@@ -309,6 +309,101 @@
             color: #fbbf24;
         }
 
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .preset-section {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            grid-column: 1 / -1;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .preset-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .preset-item:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        .preset-item.selected {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #10b981;
+        }
+
+        .searchable-select {
+            position: relative;
+        }
+
+        .searchable-select input {
+            padding-right: 30px;
+        }
+
+        .searchable-select::after {
+            content: "▼";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #b0b8c4;
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-option {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-option:hover {
+            background: rgba(79, 209, 199, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #b0b8c4;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -394,17 +489,6 @@
                 background: #f0f0f0;
             }
         }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-        }
     </style>
 </head>
 <body>
@@ -413,6 +497,8 @@
         <div class="nav-links">
             <a href="index.html" class="nav-link">หน้าหลัก</a>
             <a href="paint-mixer.html" class="nav-link">คำนวณสีผสม</a>
+            <a href="film-calculator.html" class="nav-link">คำนวณ Film & Activator</a>
+            <a href="cost-history.html" class="nav-link">รายการ Cost ที่ทำแล้ว</a>
             <a href="data-manager.html" class="nav-link">จัดการข้อมูล</a>
             <a href="login.html" class="nav-link">เข้าสู่ระบบ</a>
         </div>
@@ -420,8 +506,41 @@
     </div>
 
     <div class="container">
-        <h1>เครื่องคำนวณต้นทุนการพ่นสี</h1>
+        <h1>Pre cost Analysis NPD</h1>
         
+        <!-- Process Preset Selection -->
+        <div class="card preset-section">
+            <h2>เลือกประเภทงาน (Preset)</h2>
+            <div class="checkbox-group">
+                <input type="checkbox" id="usePreset">
+                <label for="usePreset">ใช้ Preset (แนะนำค่าต่างๆ อัตโนมัติ)</label>
+            </div>
+            
+            <div id="presetOptions" style="display: none;">
+                <div class="preset-grid">
+                    <div class="preset-item" data-preset="paint-only">
+                        <h3>1. พ่นสี</h3>
+                        <p>เช็ด → พ่นเบส → ตรวจ → ขาย</p>
+                    </div>
+                    <div class="preset-item" data-preset="decoration">
+                        <h3>2. ชุบลาย (Transfer)</h3>
+                        <p>เช็ด → พ่นเบส → ชุบลาย → ท็อปโค้ท → ตรวจ → ขาย</p>
+                    </div>
+                    <div class="preset-item" data-preset="decoration-2">
+                        <h3>3. ชุบลาย 2 (Transfer 2)</h3>
+                        <p>เช็ด → ชุบลาย → ท็อปโค้ท → ตรวจ → ขาย</p>
+                    </div>
+                    <div class="preset-item" data-preset="topcoat-only">
+                        <h3>4. ท็อปโค้ท</h3>
+                        <p>เช็ด → ท็อปโค้ท → ตรวจ → ขาย</p>
+                    </div>
+                </div>
+                <div id="selectedPreset" style="display: none; text-align: center; margin-top: 15px;">
+                    <span style="color: #10b981; font-weight: bold;">เลือก: <span id="selectedPresetName"></span></span>
+                </div>
+            </div>
+        </div>
+
         <!-- Part Information -->
         <div class="card">
             <h2>ข้อมูลชิ้นงาน</h2>
@@ -498,6 +617,23 @@
                 <input type="checkbox" id="tryRotate">
                 <label for="tryRotate">Try Rotate 90°</label>
             </div>
+
+            <!-- Parts per Jig Calculation Mode -->
+            <div class="form-group">
+                <label>การคำนวณจำนวนชิ้นใน Jig</label>
+                <div class="checkbox-group">
+                    <input type="radio" id="autoCalculate" name="jigCalculation" value="auto" checked>
+                    <label for="autoCalculate">คำนวณอัตโนมัติ</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="radio" id="manualInput" name="jigCalculation" value="manual">
+                    <label for="manualInput">ป้อนจำนวนชิ้นเอง</label>
+                </div>
+                <div class="form-group" id="manualPartsGroup" style="display: none;">
+                    <label for="manualPartsPerJig">จำนวนชิ้นใน Jig</label>
+                    <input type="number" id="manualPartsPerJig" min="1" value="1">
+                </div>
+            </div>
             
             <div class="form-group">
                 <label for="currency">สกุลเงิน</label>
@@ -536,36 +672,7 @@
                 <label for="autoCleaningCalc">คำนวณอัตโนมัติ (20% ของสี)</label>
             </div>
             
-            <table class="consumables-table">
-                <thead>
-                    <tr>
-                        <th>วัสดุ</th>
-                        <th>ราคา (฿/g)</th>
-                        <th>ปริมาณ (g/part)</th>
-                        <th>ใช้งาน</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>PM (Pre-cleaner)</td>
-                        <td><input type="number" id="pmPrice" value="0.15" step="0.01"></td>
-                        <td><input type="number" id="pmAmount" step="0.1" disabled></td>
-                        <td><input type="checkbox" id="usePM" checked></td>
-                    </tr>
-                    <tr>
-                        <td>P700 (Main cleaner)</td>
-                        <td><input type="number" id="p700Price" value="0.18" step="0.01"></td>
-                        <td><input type="number" id="p700Amount" step="0.1" disabled></td>
-                        <td><input type="checkbox" id="useP700" checked></td>
-                    </tr>
-                    <tr>
-                        <td>IPA (Isopropyl Alcohol)</td>
-                        <td><input type="number" id="ipaPrice" value="0.12" step="0.01"></td>
-                        <td><input type="number" id="ipaAmount" step="0.1" disabled></td>
-                        <td><input type="checkbox" id="useIPA"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="cleaningMaterialsTable"></div>
         </div>
 
         <!-- Action Buttons -->
@@ -573,6 +680,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-primary" onclick="calculate()" id="calculateBtn">CALCULATE</button>
                 <button type="button" class="btn btn-success" onclick="printReport()" id="printBtn" style="display:none;">Print/Export PDF</button>
+                <button type="button" class="btn btn-success" onclick="saveCalculation()" id="saveBtn" style="display:none;">บันทึกลงฐานข้อมูล</button>
                 <button type="button" class="btn btn-secondary" onclick="resetAll()">Reset</button>
             </div>
         </div>
@@ -615,13 +723,18 @@
             <h3 style="color: #4fd1c7; margin: 20px 0 10px 0;">ASCII Layout</h3>
             <div class="ascii-layout" id="asciiLayout"></div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2025 bunnamchai.bu2025 - สงวนลิขสิทธิ์
+        </div>
     </div>
 
     <!-- Print Section (Hidden) -->
     <div class="print-section" id="printSection">
         <div class="print-header">
             <h1>THAI CUBIC TECHNOLOGY CO. LTD.</h1>
-            <p>PAINT COSTING CALCULATION REPORT</p>
+            <p>PRE COST ANALYSIS NPD REPORT</p>
             <p>Date: <span id="printDate"></span> | Calculation Date: <span id="calcDate"></span></p>
         </div>
         
@@ -632,7 +745,9 @@
         // Global variables
         let layers = [];
         let paintDB = [];
+        let cleaningMaterials = [];
         let calculationResults = null;
+        let selectedPreset = null;
         window.PLASTICS = {};
         window.CT_PRESET = {};
 
@@ -643,6 +758,8 @@
             setupImagePreview();
             initializeDB();
             setupCleaningCalculation();
+            setupPresetSelection();
+            setupJigCalculationMode();
         });
 
         // User authentication check
@@ -651,16 +768,148 @@
             document.getElementById('userInfo').textContent = `ผู้ใช้: ${user.username} (${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทั่วไป'})`;
         }
 
-        // Cleaning materials calculation setup
-        function setupCleaningCalculation() {
-            const autoCalc = document.getElementById('autoCleaningCalc');
-            const amountInputs = ['pmAmount', 'p700Amount', 'ipaAmount'];
+        // Setup preset selection
+        function setupPresetSelection() {
+            const usePreset = document.getElementById('usePreset');
+            const presetOptions = document.getElementById('presetOptions');
+            const presetItems = document.querySelectorAll('.preset-item');
             
-            autoCalc.addEventListener('change', function() {
-                amountInputs.forEach(id => {
-                    document.getElementById(id).disabled = this.checked;
+            usePreset.addEventListener('change', function() {
+                presetOptions.style.display = this.checked ? 'block' : 'none';
+                if (!this.checked) {
+                    selectedPreset = null;
+                    document.getElementById('selectedPreset').style.display = 'none';
+                    presetItems.forEach(item => item.classList.remove('selected'));
+                }
+            });
+            
+            presetItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    presetItems.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPreset = this.dataset.preset;
+                    document.getElementById('selectedPreset').style.display = 'block';
+                    document.getElementById('selectedPresetName').textContent = this.querySelector('h3').textContent;
+                    applyPresetSettings(selectedPreset);
                 });
             });
+        }
+
+        function applyPresetSettings(preset) {
+            switch(preset) {
+                case 'paint-only':
+                    document.getElementById('cycleTime').value = 120;
+                    // Clear existing layers and add base layer
+                    layers = [];
+                    layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
+                    break;
+                case 'decoration':
+                    document.getElementById('cycleTime').value = 150;
+                    layers = [];
+                    layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
+                    layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
+                    break;
+                case 'decoration-2':
+                    document.getElementById('cycleTime').value = 140;
+                    layers = [];
+                    layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
+                    break;
+                case 'topcoat-only':
+                    document.getElementById('cycleTime').value = 100;
+                    layers = [];
+                    layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
+                    break;
+            }
+            updateLayersTable();
+        }
+
+        // Setup jig calculation mode
+        function setupJigCalculationMode() {
+            const autoCalc = document.getElementById('autoCalculate');
+            const manualInput = document.getElementById('manualInput');
+            const manualGroup = document.getElementById('manualPartsGroup');
+            
+            autoCalc.addEventListener('change', function() {
+                if (this.checked) {
+                    manualGroup.style.display = 'none';
+                }
+            });
+            
+            manualInput.addEventListener('change', function() {
+                if (this.checked) {
+                    manualGroup.style.display = 'block';
+                }
+            });
+        }
+
+        // Cleaning materials calculation setup
+        function setupCleaningCalculation() {
+            loadCleaningMaterials();
+            const autoCalc = document.getElementById('autoCleaningCalc');
+            
+            autoCalc.addEventListener('change', function() {
+                renderCleaningMaterialsTable();
+            });
+        }
+
+        async function loadCleaningMaterials() {
+            try {
+                const response = await fetch('cleaning.json', { cache: 'no-cache' });
+                if (response.ok) {
+                    cleaningMaterials = await response.json();
+                } else {
+                    cleaningMaterials = [
+                        { id: 'pm', name: 'PM (Pre-cleaner)', price: 0.15, default_amount: 0.2, active: true },
+                        { id: 'p700', name: 'P700 (Main cleaner)', price: 0.18, default_amount: 0.2, active: true },
+                        { id: 'ipa', name: 'IPA (Isopropyl Alcohol)', price: 0.12, default_amount: 0.2, active: false }
+                    ];
+                }
+            } catch (error) {
+                cleaningMaterials = [
+                    { id: 'pm', name: 'PM (Pre-cleaner)', price: 0.15, default_amount: 0.2, active: true },
+                    { id: 'p700', name: 'P700 (Main cleaner)', price: 0.18, default_amount: 0.2, active: true },
+                    { id: 'ipa', name: 'IPA (Isopropyl Alcohol)', price: 0.12, default_amount: 0.2, active: false }
+                ];
+            }
+            renderCleaningMaterialsTable();
+        }
+
+        function renderCleaningMaterialsTable() {
+            const container = document.getElementById('cleaningMaterialsTable');
+            const autoCalc = document.getElementById('autoCleaningCalc').checked;
+            
+            container.innerHTML = `
+                <table class="consumables-table">
+                    <thead>
+                        <tr>
+                            <th>วัสดุ</th>
+                            <th>ราคา (฿/g)</th>
+                            <th>ปริมาณ (g/part)</th>
+                            <th>ใช้งาน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cleaningMaterials.map((material, index) => `
+                            <tr>
+                                <td>${material.name}</td>
+                                <td><input type="number" value="${material.price}" step="0.01" onchange="updateCleaningMaterial(${index}, 'price', this.value)"></td>
+                                <td><input type="number" id="amount-${material.id}" step="0.1" ${autoCalc ? 'disabled' : ''} onchange="updateCleaningMaterial(${index}, 'amount', this.value)"></td>
+                                <td><input type="checkbox" ${material.active ? 'checked' : ''} onchange="updateCleaningMaterial(${index}, 'active', this.checked)"></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function updateCleaningMaterial(index, field, value) {
+            if (field === 'price') {
+                cleaningMaterials[index].price = parseFloat(value) || 0;
+            } else if (field === 'active') {
+                cleaningMaterials[index].active = value;
+            } else if (field === 'amount') {
+                cleaningMaterials[index].amount = parseFloat(value) || 0;
+            }
         }
 
         // Image preview setup
@@ -702,12 +951,74 @@
             updateLayerPaintOptions();
         }
 
+        // Searchable select component
+        function createSearchableSelect(containerId, paintId, onSelect) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            const searchableDiv = document.createElement('div');
+            searchableDiv.className = 'searchable-select';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'ค้นหาสี...';
+            input.value = paintId ? (paintDB.find(p => p.id === paintId)?.name || paintId) : '';
+            
+            const dropdown = document.createElement('div');
+            dropdown.className = 'search-dropdown';
+            
+            input.addEventListener('focus', () => {
+                updateDropdown('');
+                dropdown.style.display = 'block';
+            });
+            
+            input.addEventListener('input', (e) => {
+                updateDropdown(e.target.value);
+                dropdown.style.display = 'block';
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!searchableDiv.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+            
+            function updateDropdown(searchTerm) {
+                const presetOptions = [
+                    { id: 'preset-base', name: 'Base Color (Preset)' },
+                    { id: 'preset-top', name: 'Top Coat (Preset)' },
+                    { id: 'preset-primer', name: 'Primer (Preset)' }
+                ];
+                
+                const allOptions = [...presetOptions, ...paintDB];
+                const filtered = allOptions.filter(paint => 
+                    paint.name.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                dropdown.innerHTML = filtered.map(paint => 
+                    `<div class="search-option" data-id="${paint.id}">${paint.name}</div>`
+                ).join('');
+                
+                dropdown.querySelectorAll('.search-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        input.value = option.textContent;
+                        dropdown.style.display = 'none';
+                        onSelect(option.dataset.id);
+                    });
+                });
+            }
+            
+            searchableDiv.appendChild(input);
+            searchableDiv.appendChild(dropdown);
+            container.appendChild(searchableDiv);
+        }
+
         // Layer functions
         function addLayer() {
             const layer = {
                 paintId: '',
                 thickness: 20,
-                readyToUsePrice: 0.5 // ฿/g default
+                readyToUsePrice: 0.5
             };
             layers.push(layer);
             updateLayersTable();
@@ -722,7 +1033,6 @@
 
         function presetDecoration() {
             layers = [];
-            // Add Base 20µm + Top 20µm with sample ready-to-use prices
             layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
             layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
             updateLayersTable();
@@ -734,19 +1044,10 @@
 
             layers.forEach((layer, index) => {
                 const row = tbody.insertRow();
-                const paint = paintDB.find(p => p.id === layer.paintId);
                 
                 row.innerHTML = `
                     <td>
-                        <select onchange="updateLayerPaint(${index}, this.value)">
-                            <option value="">เลือกสี...</option>
-                            <option value="preset-base" ${layer.paintId === 'preset-base' ? 'selected' : ''}>Base Color (Preset)</option>
-                            <option value="preset-top" ${layer.paintId === 'preset-top' ? 'selected' : ''}>Top Coat (Preset)</option>
-                            <option value="preset-primer" ${layer.paintId === 'preset-primer' ? 'selected' : ''}>Primer (Preset)</option>
-                            ${paintDB.map(p => 
-                                `<option value="${p.id}" ${p.id === layer.paintId ? 'selected' : ''}>${p.name}</option>`
-                            ).join('')}
-                        </select>
+                        <div id="paint-select-${index}"></div>
                     </td>
                     <td>${getLayerType(layer.paintId)}</td>
                     <td>
@@ -758,6 +1059,11 @@
                                onchange="updateLayerThickness(${index}, this.value)">
                     </td>
                 `;
+                
+                // Create searchable select for each layer
+                createSearchableSelect(`paint-select-${index}`, layer.paintId, (paintId) => {
+                    updateLayerPaint(index, paintId);
+                });
             });
         }
 
@@ -772,7 +1078,6 @@
 
         function updateLayerPaint(index, paintId) {
             layers[index].paintId = paintId;
-            // Auto-set price based on paint type
             const paint = paintDB.find(p => p.id === paintId);
             if (paint && paint.ready_to_use_price) {
                 layers[index].readyToUsePrice = paint.ready_to_use_price;
@@ -799,13 +1104,11 @@
             const plasticType = document.getElementById('plasticType').value;
             if (plasticType !== 'PP') return;
 
-            // Check if primer already exists
             const hasPrimer = layers.some(layer => {
                 return getLayerType(layer.paintId) === 'Primer';
             });
 
             if (!hasPrimer) {
-                // Add primer as first layer
                 layers.unshift({
                     paintId: 'preset-primer',
                     thickness: 10,
@@ -817,7 +1120,6 @@
 
         // Calculation functions
         function surfaceAreaRect(w, h, d, factor) {
-            // Surface area of rectangular box: 2*(W*H + W*D + H*D) * surface_factor
             return 2 * (w * h + w * d + h * d) * factor;
         }
 
@@ -861,10 +1163,8 @@
             const displayW = rotated ? partH : partW;
             const displayH = rotated ? partW : partH;
             
-            // Top border
             layout += '+' + '-'.repeat(Math.floor(jigW * 2)) + '+\n';
             
-            // Content with parts
             const contentRows = Math.floor(jigH);
             for (let r = 0; r < contentRows; r++) {
                 let line = '|';
@@ -893,7 +1193,6 @@
             addRippleEffect(document.getElementById('calculateBtn'));
             ensurePrimerForPP();
             
-            // Get input values
             const partW = parseFloat(document.getElementById('partWidth').value) || 0;
             const partH = parseFloat(document.getElementById('partHeight').value) || 0;
             const partD = parseFloat(document.getElementById('partDepth').value) || 0;
@@ -906,31 +1205,31 @@
             const cycleTime = parseFloat(document.getElementById('cycleTime').value) || 120;
             const currency = document.getElementById('currency').value || '฿';
 
-            // Calculate surface area (cm²)
             const surfaceArea = surfaceAreaRect(partW, partH, partD, surfaceFactor);
             
-            // Calculate layout
-            const layout = partsPerJig(partW, partH, jigW, jigH, gap, tryRotate);
+            // Check calculation mode
+            let layout;
+            const isManual = document.getElementById('manualInput').checked;
             
-            // Calculate paint consumption per part using Ready-to-use prices
+            if (isManual) {
+                const manualParts = parseInt(document.getElementById('manualPartsPerJig').value) || 1;
+                layout = { count: manualParts, cols: 0, rows: 0, rotated: false };
+            } else {
+                layout = partsPerJig(partW, partH, jigW, jigH, gap, tryRotate);
+            }
+            
             let totalPaintPerPart = 0;
             let costBreakdownData = [];
             let totalCostPerPart = 0;
             
             layers.forEach(layer => {
                 if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
-                    // Volume = Surface Area × thickness (1 µm = 1e-4 cm)
                     const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
-                    
-                    // Mass = Volume × 1.2 (average SG for ready-to-use paint)
                     const massGrams = volumeCm3 * 1.2;
-                    
-                    // Add loss percentage
                     const massWithLoss = massGrams * (1 + lossPct / 100);
                     
                     totalPaintPerPart += massWithLoss;
                     
-                    // Cost calculation using ready-to-use price (฿/g)
                     const layerCost = massWithLoss * layer.readyToUsePrice;
                     totalCostPerPart += layerCost;
                     
@@ -950,50 +1249,42 @@
             let cleaningCost = 0;
             const autoClean = document.getElementById('autoCleaningCalc').checked;
             
-            if (document.getElementById('usePM').checked) {
-                const pmPrice = parseFloat(document.getElementById('pmPrice').value) || 0.15;
-                let pmAmount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('pmAmount').value) || 0;
-                if (autoClean) document.getElementById('pmAmount').value = pmAmount.toFixed(1);
-                cleaningCost += pmAmount * pmPrice;
-                costBreakdownData.push({ name: 'PM Cleaner', mass: pmAmount, cost: pmAmount * pmPrice });
-            }
-            
-            if (document.getElementById('useP700').checked) {
-                const p700Price = parseFloat(document.getElementById('p700Price').value) || 0.18;
-                let p700Amount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('p700Amount').value) || 0;
-                if (autoClean) document.getElementById('p700Amount').value = p700Amount.toFixed(1);
-                cleaningCost += p700Amount * p700Price;
-                costBreakdownData.push({ name: 'P700 Cleaner', mass: p700Amount, cost: p700Amount * p700Price });
-            }
-            
-            if (document.getElementById('useIPA').checked) {
-                const ipaPrice = parseFloat(document.getElementById('ipaPrice').value) || 0.12;
-                let ipaAmount = autoClean ? totalPaintPerPart * 0.2 : parseFloat(document.getElementById('ipaAmount').value) || 0;
-                if (autoClean) document.getElementById('ipaAmount').value = ipaAmount.toFixed(1);
-                cleaningCost += ipaAmount * ipaPrice;
-                costBreakdownData.push({ name: 'IPA', mass: ipaAmount, cost: ipaAmount * ipaPrice });
-            }
+            cleaningMaterials.forEach((material, index) => {
+                if (material.active) {
+                    let amount = autoClean ? totalPaintPerPart * (material.default_amount || 0.2) : 
+                                 (material.amount || 0);
+                    
+                    if (autoClean) {
+                        document.getElementById(`amount-${material.id}`).value = amount.toFixed(1);
+                    }
+                    
+                    cleaningCost += amount * material.price;
+                    costBreakdownData.push({ 
+                        name: material.name, 
+                        mass: amount, 
+                        cost: amount * material.price 
+                    });
+                }
+            });
 
             totalCostPerPart += cleaningCost;
             
-            // Calculate other KPIs
             const paintPerJig = totalPaintPerPart * layout.count;
             const ctPerPart = layout.count > 0 ? cycleTime / layout.count : 0;
             
-            // Store results for printing
             calculationResults = {
                 partW, partH, partD, surfaceFactor, lossPct, jigW, jigH, gap, tryRotate, cycleTime,
                 surfaceArea, layout, totalPaintPerPart, paintPerJig, ctPerPart, totalCostPerPart,
-                costBreakdownData, currency,
-                calculationDate: new Date().toLocaleDateString('th-TH')
+                costBreakdownData, currency, selectedPreset,
+                calculationDate: new Date().toLocaleDateString('th-TH'),
+                isManualJig: isManual
             };
             
-            // Display results
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('resultsSection').classList.add('animate-in');
             document.getElementById('printBtn').style.display = 'inline-block';
+            document.getElementById('saveBtn').style.display = 'inline-block';
             
-            // Animate counters
             animateCounter('partsPerJig', 0, layout.count, 0);
             animateCounter('paintPerPart', 0, totalPaintPerPart, 2);
             animateCounter('paintPerJig', 0, paintPerJig, 1);
@@ -1001,25 +1292,62 @@
             animateCounter('ctPerPart', 0, ctPerPart, 1);
             animateCounter('costPerPart', 0, totalCostPerPart, 2, currency);
             
-            // Update displays
             document.getElementById('orientationTag').textContent = 
-                layout.rotated ? 'Rotated 90°' : 'Default Orientation';
+                isManual ? 'Manual Input' : (layout.rotated ? 'Rotated 90°' : 'Default Orientation');
             
             updateCostBreakdown(costBreakdownData, totalCostPerPart, currency);
             
-            // Update ASCII layout with animation
             setTimeout(() => {
                 const asciiElement = document.getElementById('asciiLayout');
                 asciiElement.style.opacity = '0';
                 asciiElement.style.transform = 'translateY(20px)';
                 
                 setTimeout(() => {
-                    asciiElement.textContent = asciiLayout(layout.cols, layout.rows, layout.rotated);
+                    if (isManual) {
+                        asciiElement.textContent = `Manual Input: ${layout.count} parts per jig\nJig ${jigW}x${jigH} | Part ${partW}x${partH}`;
+                    } else {
+                        asciiElement.textContent = asciiLayout(layout.cols, layout.rows, layout.rotated);
+                    }
                     asciiElement.style.transition = 'all 0.6s ease';
                     asciiElement.style.opacity = '1';
                     asciiElement.style.transform = 'translateY(0)';
                 }, 300);
             }, 500);
+        }
+
+        // Save calculation to database
+        function saveCalculation() {
+            if (!calculationResults) {
+                alert('กรุณาคำนวณก่อนบันทึก');
+                return;
+            }
+            
+            const modelName = prompt('ชื่อ Model:');
+            const partName = prompt('ชื่อ Part:');
+            const partNo = prompt('Part Number:');
+            
+            if (!modelName || !partName || !partNo) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+            
+            const savedCalculations = JSON.parse(localStorage.getItem('savedCalculations') || '[]');
+            
+            const newCalculation = {
+                id: Date.now(),
+                modelName,
+                partName,
+                partNo,
+                ...calculationResults,
+                saveDate: new Date().toISOString(),
+                layers: [...layers],
+                cleaningMaterials: cleaningMaterials.filter(m => m.active)
+            };
+            
+            savedCalculations.push(newCalculation);
+            localStorage.setItem('savedCalculations', JSON.stringify(savedCalculations));
+            
+            alert('บันทึกการคำนวณเรียบร้อยแล้ว');
         }
 
         // Animation functions
@@ -1098,9 +1426,10 @@
                 <table class="print-table">
                     <tr><th>DESCRIPTION</th><th></th></tr>
                     <tr><td>Customer: TOYOTA</td><td></td></tr>
-                    <tr><td>Part Name: PART A</td><td></td></tr>
-                    <tr><td>Part No: 000001-000000-A</td><td></td></tr>
+                    <tr><td>Part Name: ${calculationResults.partName || 'PART A'}</td><td></td></tr>
+                    <tr><td>Part No: ${calculationResults.partNo || '000001-000000-A'}</td><td></td></tr>
                     <tr><td>Material: ${document.getElementById('plasticType').value}</td><td></td></tr>
+                    ${calculationResults.selectedPreset ? `<tr><td>Process Type: ${calculationResults.selectedPreset}</td><td></td></tr>` : ''}
                 </table>
 
                 <h3>PART DIMENSIONS</h3>
@@ -1125,7 +1454,7 @@
                                 <td>Layer ${i+1}</td>
                                 <td>${getLayerType(layer.paintId)}</td>
                                 <td>${layer.thickness}</td>
-                                <td>${layer.readyToUsePrice.toFixed(2)}</td>
+                                <td>${layer.readyToUsePrice.toFixed(4)}</td>
                                 <td>${cost ? cost.cost.toFixed(2) : '0.00'}</td>
                             </tr>`;
                         }).join('')}
@@ -1136,7 +1465,8 @@
                 <table class="print-table">
                     <tr><th>Jig Size</th><td>${calculationResults.jigW} x ${calculationResults.jigH} cm</td></tr>
                     <tr><th>Parts per Jig</th><td>${calculationResults.layout.count}</td></tr>
-                    <tr><th>Orientation</th><td>${calculationResults.layout.rotated ? 'Rotated 90°' : 'Default'}</td></tr>
+                    <tr><th>Calculation Mode</th><td>${calculationResults.isManualJig ? 'Manual Input' : 'Auto Calculate'}</td></tr>
+                    <tr><th>Orientation</th><td>${calculationResults.isManualJig ? 'Manual' : (calculationResults.layout.rotated ? 'Rotated 90°' : 'Default')}</td></tr>
                     <tr><th>Cycle Time per Part</th><td>${calculationResults.ctPerPart.toFixed(1)} sec</td></tr>
                 </table>
 
@@ -1207,12 +1537,21 @@
                 document.getElementById('cycleTime').value = '120';
                 document.getElementById('tryRotate').checked = false;
                 document.getElementById('plasticType').selectedIndex = 0;
+                document.getElementById('autoCalculate').checked = true;
+                document.getElementById('manualPartsGroup').style.display = 'none';
+                
+                // Reset preset
+                document.getElementById('usePreset').checked = false;
+                document.getElementById('presetOptions').style.display = 'none';
+                document.querySelectorAll('.preset-item').forEach(item => item.classList.remove('selected'));
+                selectedPreset = null;
                 
                 layers = [];
                 updateLayersTable();
                 
                 document.getElementById('resultsSection').style.display = 'none';
                 document.getElementById('printBtn').style.display = 'none';
+                document.getElementById('saveBtn').style.display = 'none';
                 
                 document.getElementById('partImage').value = '';
                 document.getElementById('imagePreview').style.display = 'none';
