@@ -176,10 +176,6 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
-
         .btn-group {
             display: flex;
             gap: 10px;
@@ -353,88 +349,12 @@
             border-color: #10b981;
         }
 
-        .searchable-select {
-            position: relative;
-        }
-
-        .searchable-select input {
-            padding-right: 30px;
-        }
-
-        .searchable-select::after {
-            content: "▼";
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: #b0b8c4;
-        }
-
-        .search-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-
-        .search-option {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .search-option:hover {
-            background: rgba(79, 209, 199, 0.2);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #b0b8c4;
-            font-size: 0.9rem;
-            grid-column: 1 / -1;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            animation: ripple 0.6s linear;
+        .ct-breakdown {
+            background: rgba(79, 209, 199, 0.1);
+            border: 1px solid rgba(79, 209, 199, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
         }
 
         .orientation-tag {
@@ -447,17 +367,80 @@
             margin: 5px 0;
         }
 
-        .print-section {
-            display: none;
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #b0b8c4;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(79, 209, 199, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #e0e6ed;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        /* Print Styles */
         @media print {
-            body * {
+            * {
                 visibility: hidden;
             }
+            
             .print-section, .print-section * {
                 visibility: visible;
             }
+            
             .print-section {
                 position: absolute;
                 left: 0;
@@ -465,28 +448,97 @@
                 width: 100%;
                 background: white;
                 color: black;
-                padding: 20px;
+                font-family: Arial, sans-serif;
                 font-size: 12px;
+                line-height: 1.4;
             }
+            
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            
+            .print-container {
+                width: 210mm;
+                height: 297mm;
+                padding: 15mm;
+                box-sizing: border-box;
+                border: 2px solid #000;
+                background: white;
+                page-break-after: always;
+            }
+            
             .print-header {
                 text-align: center;
                 border-bottom: 2px solid #000;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
+                padding-bottom: 10mm;
+                margin-bottom: 15mm;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15mm;
             }
+            
+            .print-logo {
+                width: 80px;
+                height: 80px;
+                object-fit: contain;
+                border: 1px solid #333;
+            }
+            
+            .print-company-info h1 {
+                font-size: 18px;
+                margin: 0 0 5px 0;
+            }
+            
+            .print-company-info h2 {
+                font-size: 14px;
+                margin: 0 0 10px 0;
+            }
+            
             .print-table {
                 width: 100%;
                 border-collapse: collapse;
-                margin: 10px 0;
+                margin: 8mm 0;
             }
+            
             .print-table th,
             .print-table td {
-                border: 1px solid #000;
-                padding: 5px;
+                border: 1px solid #333;
+                padding: 3mm;
                 text-align: left;
+                vertical-align: top;
             }
+            
             .print-table th {
-                background: #f0f0f0;
+                background-color: #f0f0f0;
+                font-weight: bold;
+            }
+            
+            .print-section-title {
+                background-color: #e6f3ff;
+                font-weight: bold;
+                padding: 3mm;
+                border: 1px solid #000;
+                margin: 5mm 0 3mm 0;
+                font-size: 14px;
+            }
+            
+            .cost-summary {
+                background-color: #fff2cc;
+                border: 2px solid #d6b656;
+                padding: 5mm;
+                margin: 5mm 0;
+                text-align: center;
+            }
+            
+            .part-image {
+                width: 60px;
+                height: 60px;
+                object-fit: contain;
+                border: 1px solid #333;
+                float: right;
+                margin-left: 5mm;
             }
         }
     </style>
@@ -573,7 +625,7 @@
             <div class="input-row">
                 <div class="form-group">
                     <label for="surfaceFactor">ตัวคูณพื้นที่ผิว</label>
-                    <input type="number" id="surfaceFactor" step="0.1" value="10.0">
+                    <input type="number" id="surfaceFactor" step="0.1" value="1.0">
                 </div>
                 <div class="form-group">
                     <label for="lossPct">Loss per lot (%)</label>
@@ -608,8 +660,38 @@
                     <input type="number" id="minGap" step="0.1" value="2">
                 </div>
                 <div class="form-group">
-                    <label for="cycleTime">Cycle Time per Jig (sec)</label>
+                    <label for="cycleTime">Total Cycle Time per Jig (sec)</label>
                     <input type="number" id="cycleTime" step="1" value="120">
+                </div>
+            </div>
+            
+            <!-- CT Breakdown Section -->
+            <div class="ct-breakdown">
+                <h3 style="color: #4fd1c7; margin-bottom: 15px;">Cycle Time Breakdown</h3>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label for="ctCleanInput">CT เช็ด (sec)</label>
+                        <input type="number" id="ctCleanInput" step="1" value="15" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="ctBaseInput">CT พ่น Base (sec)</label>
+                        <input type="number" id="ctBaseInput" step="1" value="60" min="0">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label for="ctTopcoatInput">CT พ่น Topcoat (sec)</label>
+                        <input type="number" id="ctTopcoatInput" step="1" value="45" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="ctInspectInput">CT ตรวจสอบ (sec)</label>
+                        <input type="number" id="ctInspectInput" step="1" value="20" min="0">
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoCalcCT" checked>
+                    <label for="autoCalcCT">คำนวณ Total CT อัตโนมัติ</label>
                 </div>
             </div>
             
@@ -730,15 +812,41 @@
         </div>
     </div>
 
+    <!-- Save Calculation Modal -->
+    <div id="saveCalcModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>บันทึกการคำนวณ</h2>
+                <button type="button" class="close-btn" onclick="closeSaveModal()">&times;</button>
+            </div>
+            <form id="saveCalcForm" onsubmit="handleSaveSubmit(event)">
+                <div class="form-group">
+                    <label for="saveModelName">ชื่อ Model <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="saveModelName" required placeholder="เช่น Toyota Camry 2024">
+                </div>
+                <div class="form-group">
+                    <label for="savePartName">ชื่อ Part <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="savePartName" required placeholder="เช่น Front Bumper">
+                </div>
+                <div class="form-group">
+                    <label for="savePartNo">Part Number <span style="color: #ef4444;">*</span></label>
+                    <input type="text" id="savePartNo" required placeholder="เช่น FB-001-2024">
+                </div>
+                <div class="form-group">
+                    <label for="saveNotes">หมายเหตุ (ไม่บังคับ)</label>
+                    <textarea id="saveNotes" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeSaveModal()">ยกเลิก</button>
+                    <button type="submit" class="btn btn-success">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Print Section (Hidden) -->
     <div class="print-section" id="printSection">
-        <div class="print-header">
-            <h1>THAI CUBIC TECHNOLOGY CO. LTD.</h1>
-            <p>PRE COST ANALYSIS NPD REPORT</p>
-            <p>Date: <span id="printDate"></span> | Calculation Date: <span id="calcDate"></span></p>
-        </div>
-        
-        <div id="printContent"></div>
+        <!-- Print content will be generated here -->
     </div>
 
     <script>
@@ -760,12 +868,41 @@
             setupCleaningCalculation();
             setupPresetSelection();
             setupJigCalculationMode();
+            setupCTCalculation();
         });
 
         // User authentication check
         function checkUserLogin() {
             const user = JSON.parse(localStorage.getItem('currentUser') || '{"username":"guest","role":"user"}');
             document.getElementById('userInfo').textContent = `ผู้ใช้: ${user.username} (${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทั่วไป'})`;
+        }
+
+        // Setup CT calculation
+        function setupCTCalculation() {
+            document.getElementById('autoCalcCT').addEventListener('change', function() {
+                if (this.checked) {
+                    updateTotalCT();
+                }
+            });
+
+            // Event listeners for CT inputs
+            ['ctCleanInput', 'ctBaseInput', 'ctTopcoatInput', 'ctInspectInput'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    if (document.getElementById('autoCalcCT').checked) {
+                        updateTotalCT();
+                    }
+                });
+            });
+        }
+
+        function updateTotalCT() {
+            const ctClean = parseFloat(document.getElementById('ctCleanInput').value) || 0;
+            const ctBase = parseFloat(document.getElementById('ctBaseInput').value) || 0;
+            const ctTopcoat = parseFloat(document.getElementById('ctTopcoatInput').value) || 0;
+            const ctInspect = parseFloat(document.getElementById('ctInspectInput').value) || 0;
+            
+            const totalCT = ctClean + ctBase + ctTopcoat + ctInspect;
+            document.getElementById('cycleTime').value = totalCT;
         }
 
         // Setup preset selection
@@ -798,27 +935,42 @@
         function applyPresetSettings(preset) {
             switch(preset) {
                 case 'paint-only':
-                    document.getElementById('cycleTime').value = 120;
-                    // Clear existing layers and add base layer
+                    document.getElementById('ctCleanInput').value = 15;
+                    document.getElementById('ctBaseInput').value = 80;
+                    document.getElementById('ctTopcoatInput').value = 0;
+                    document.getElementById('ctInspectInput').value = 15;
                     layers = [];
                     layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
                     break;
                 case 'decoration':
-                    document.getElementById('cycleTime').value = 150;
+                    document.getElementById('ctCleanInput').value = 15;
+                    document.getElementById('ctBaseInput').value = 60;
+                    document.getElementById('ctTopcoatInput').value = 45;
+                    document.getElementById('ctInspectInput').value = 20;
                     layers = [];
                     layers.push({ paintId: 'preset-base', thickness: 20, readyToUsePrice: 0.5 });
                     layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
                     break;
                 case 'decoration-2':
-                    document.getElementById('cycleTime').value = 140;
+                    document.getElementById('ctCleanInput').value = 15;
+                    document.getElementById('ctBaseInput').value = 0;
+                    document.getElementById('ctTopcoatInput').value = 45;
+                    document.getElementById('ctInspectInput').value = 20;
                     layers = [];
                     layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
                     break;
                 case 'topcoat-only':
-                    document.getElementById('cycleTime').value = 100;
+                    document.getElementById('ctCleanInput').value = 15;
+                    document.getElementById('ctBaseInput').value = 0;
+                    document.getElementById('ctTopcoatInput').value = 60;
+                    document.getElementById('ctInspectInput').value = 15;
                     layers = [];
                     layers.push({ paintId: 'preset-top', thickness: 20, readyToUsePrice: 0.72 });
                     break;
+            }
+            
+            if (document.getElementById('autoCalcCT').checked) {
+                updateTotalCT();
             }
             updateLayersTable();
         }
@@ -951,68 +1103,6 @@
             updateLayerPaintOptions();
         }
 
-        // Searchable select component
-        function createSearchableSelect(containerId, paintId, onSelect) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            const searchableDiv = document.createElement('div');
-            searchableDiv.className = 'searchable-select';
-            
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = 'ค้นหาสี...';
-            input.value = paintId ? (paintDB.find(p => p.id === paintId)?.name || paintId) : '';
-            
-            const dropdown = document.createElement('div');
-            dropdown.className = 'search-dropdown';
-            
-            input.addEventListener('focus', () => {
-                updateDropdown('');
-                dropdown.style.display = 'block';
-            });
-            
-            input.addEventListener('input', (e) => {
-                updateDropdown(e.target.value);
-                dropdown.style.display = 'block';
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!searchableDiv.contains(e.target)) {
-                    dropdown.style.display = 'none';
-                }
-            });
-            
-            function updateDropdown(searchTerm) {
-                const presetOptions = [
-                    { id: 'preset-base', name: 'Base Color (Preset)' },
-                    { id: 'preset-top', name: 'Top Coat (Preset)' },
-                    { id: 'preset-primer', name: 'Primer (Preset)' }
-                ];
-                
-                const allOptions = [...presetOptions, ...paintDB];
-                const filtered = allOptions.filter(paint => 
-                    paint.name.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-                
-                dropdown.innerHTML = filtered.map(paint => 
-                    `<div class="search-option" data-id="${paint.id}">${paint.name}</div>`
-                ).join('');
-                
-                dropdown.querySelectorAll('.search-option').forEach(option => {
-                    option.addEventListener('click', () => {
-                        input.value = option.textContent;
-                        dropdown.style.display = 'none';
-                        onSelect(option.dataset.id);
-                    });
-                });
-            }
-            
-            searchableDiv.appendChild(input);
-            searchableDiv.appendChild(dropdown);
-            container.appendChild(searchableDiv);
-        }
-
         // Layer functions
         function addLayer() {
             const layer = {
@@ -1047,7 +1137,15 @@
                 
                 row.innerHTML = `
                     <td>
-                        <div id="paint-select-${index}"></div>
+                        <select onchange="updateLayerPaint(${index}, this.value)">
+                            <option value="">เลือกสี</option>
+                            <option value="preset-base" ${layer.paintId === 'preset-base' ? 'selected' : ''}>Base Color (Preset)</option>
+                            <option value="preset-top" ${layer.paintId === 'preset-top' ? 'selected' : ''}>Top Coat (Preset)</option>
+                            <option value="preset-primer" ${layer.paintId === 'preset-primer' ? 'selected' : ''}>Primer (Preset)</option>
+                            ${paintDB.map(paint => 
+                                `<option value="${paint.id}" ${layer.paintId === paint.id ? 'selected' : ''}>${paint.name}</option>`
+                            ).join('')}
+                        </select>
                     </td>
                     <td>${getLayerType(layer.paintId)}</td>
                     <td>
@@ -1059,11 +1157,6 @@
                                onchange="updateLayerThickness(${index}, this.value)">
                     </td>
                 `;
-                
-                // Create searchable select for each layer
-                createSearchableSelect(`paint-select-${index}`, layer.paintId, (paintId) => {
-                    updateLayerPaint(index, paintId);
-                });
             });
         }
 
@@ -1190,7 +1283,6 @@
 
         // Main calculation function
         function calculate() {
-            addRippleEffect(document.getElementById('calculateBtn'));
             ensurePrimerForPP();
             
             const partW = parseFloat(document.getElementById('partWidth').value) || 0;
@@ -1272,12 +1364,21 @@
             const paintPerJig = totalPaintPerPart * layout.count;
             const ctPerPart = layout.count > 0 ? cycleTime / layout.count : 0;
             
+            // Collect CT breakdown
+            const ctBreakdown = {
+                clean: parseFloat(document.getElementById('ctCleanInput').value) || 0,
+                base: parseFloat(document.getElementById('ctBaseInput').value) || 0,
+                topcoat: parseFloat(document.getElementById('ctTopcoatInput').value) || 0,
+                inspect: parseFloat(document.getElementById('ctInspectInput').value) || 0
+            };
+            
             calculationResults = {
                 partW, partH, partD, surfaceFactor, lossPct, jigW, jigH, gap, tryRotate, cycleTime,
                 surfaceArea, layout, totalPaintPerPart, paintPerJig, ctPerPart, totalCostPerPart,
-                costBreakdownData, currency, selectedPreset,
+                costBreakdownData, currency, selectedPreset, ctBreakdown,
                 calculationDate: new Date().toLocaleDateString('th-TH'),
-                isManualJig: isManual
+                isManualJig: isManual,
+                layers: [...layers]
             };
             
             document.getElementById('resultsSection').style.display = 'block';
@@ -1315,19 +1416,33 @@
             }, 500);
         }
 
-        // Save calculation to database
+        // Save calculation modal functions
         function saveCalculation() {
             if (!calculationResults) {
                 alert('กรุณาคำนวณก่อนบันทึก');
                 return;
             }
             
-            const modelName = prompt('ชื่อ Model:');
-            const partName = prompt('ชื่อ Part:');
-            const partNo = prompt('Part Number:');
+            // เปิด Modal
+            document.getElementById('saveCalcModal').style.display = 'flex';
+        }
+
+        function closeSaveModal() {
+            document.getElementById('saveCalcModal').style.display = 'none';
+            // ล้างฟอร์ม
+            document.getElementById('saveCalcForm').reset();
+        }
+
+        function handleSaveSubmit(event) {
+            event.preventDefault();
+            
+            const modelName = document.getElementById('saveModelName').value.trim();
+            const partName = document.getElementById('savePartName').value.trim();
+            const partNo = document.getElementById('savePartNo').value.trim();
+            const notes = document.getElementById('saveNotes').value.trim();
             
             if (!modelName || !partName || !partNo) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน');
                 return;
             }
             
@@ -1338,6 +1453,7 @@
                 modelName,
                 partName,
                 partNo,
+                notes,
                 ...calculationResults,
                 saveDate: new Date().toISOString(),
                 layers: [...layers],
@@ -1347,7 +1463,142 @@
             savedCalculations.push(newCalculation);
             localStorage.setItem('savedCalculations', JSON.stringify(savedCalculations));
             
-            alert('บันทึกการคำนวณเรียบร้อยแล้ว');
+            closeSaveModal();
+            alert(`บันทึกการคำนวณสำหรับ "${modelName} - ${partName}" เรียบร้อยแล้ว`);
+        }
+
+        // Print report function with enhanced layout
+        function printReport() {
+            if (!calculationResults) {
+                alert('กรุณาคำนวณก่อนพิมพ์');
+                return;
+            }
+
+            const printSection = document.getElementById('printSection');
+            const currentDate = new Date().toLocaleDateString('th-TH');
+            const currentTime = new Date().toLocaleTimeString('th-TH');
+            
+            // Get image if available
+            const imageElement = document.getElementById('imagePreview');
+            const hasImage = imageElement && imageElement.src && imageElement.style.display !== 'none';
+            
+            printSection.innerHTML = `
+                <div class="print-container">
+                    <!-- Header -->
+                    <div class="print-header">
+                        ${hasImage ? 
+                            `<img src="${imageElement.src}" class="print-logo" alt="Part Image">` : 
+                            '<div class="print-logo" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#666;">No Image</div>'
+                        }
+                        <div class="print-company-info">
+                            <h1>THAI CUBIC TECHNOLOGY CO. LTD.</h1>
+                            <h2>PRE COST ANALYSIS NPD REPORT</h2>
+                            <p><strong>Report Date:</strong> ${currentDate} ${currentTime}</p>
+                            <p><strong>Calculation Date:</strong> ${calculationResults.calculationDate}</p>
+                        </div>
+                    </div>
+
+                    <!-- Project Information -->
+                    <div class="print-section-title">1. PROJECT INFORMATION</div>
+                    <table class="print-table">
+                        <tr><th>Customer</th><td>TOYOTA</td></tr>
+                        <tr><th>Material</th><td>${document.getElementById('plasticType').value}</td></tr>
+                        <tr><th>Process Type</th><td>${calculationResults.selectedPreset ? calculationResults.selectedPreset.toUpperCase() : 'Custom Process'}</td></tr>
+                    </table>
+
+                    <!-- Part Specifications -->
+                    <div class="print-section-title">2. PART SPECIFICATIONS</div>
+                    <table class="print-table">
+                        <tr><th>Dimension (W×H×D)</th><td>${calculationResults.partW} × ${calculationResults.partH} × ${calculationResults.partD} cm</td></tr>
+                        <tr><th>Surface Area</th><td>${calculationResults.surfaceArea.toFixed(2)} cm²</td></tr>
+                        <tr><th>Surface Factor</th><td>${calculationResults.surfaceFactor}</td></tr>
+                        <tr><th>Loss Percentage</th><td>${calculationResults.lossPct}%</td></tr>
+                    </table>
+
+                    <!-- Paint System -->
+                    <div class="print-section-title">3. PAINT SYSTEM</div>
+                    <table class="print-table">
+                        <thead>
+                            <tr><th>Layer</th><th>Paint Type</th><th>Thickness (μm)</th><th>Price (฿/g)</th><th>Cost per Part (฿)</th></tr>
+                        </thead>
+                        <tbody>
+                            ${calculationResults.layers.map((layer, i) => {
+                                const cost = calculationResults.costBreakdownData.find(item => 
+                                    item.name.includes(layer.paintId.replace('preset-', '').toUpperCase())
+                                );
+                                return `<tr>
+                                    <td>Layer ${i+1}</td>
+                                    <td>${layer.paintId.replace('preset-', '').toUpperCase()}</td>
+                                    <td>${layer.thickness}</td>
+                                    <td>${layer.readyToUsePrice.toFixed(4)}</td>
+                                    <td>${cost ? cost.cost.toFixed(3) : '0.000'}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+
+                    <!-- Cycle Time Analysis -->
+                    <div class="print-section-title">4. CYCLE TIME ANALYSIS</div>
+                    <table class="print-table">
+                        <tr><th>Process</th><th>Time (sec)</th><th>Description</th></tr>
+                        <tr><td>Cleaning CT</td><td>${calculationResults.ctBreakdown.clean}</td><td>Surface preparation</td></tr>
+                        <tr><td>Base Coat CT</td><td>${calculationResults.ctBreakdown.base}</td><td>Base color application</td></tr>
+                        <tr><td>Top Coat CT</td><td>${calculationResults.ctBreakdown.topcoat}</td><td>Top coat application</td></tr>
+                        <tr><td>Inspection CT</td><td>${calculationResults.ctBreakdown.inspect}</td><td>Quality control</td></tr>
+                        <tr style="background-color:#f0f0f0;font-weight:bold;">
+                            <td>Total CT per Jig</td><td>${calculationResults.cycleTime}</td><td>Complete cycle</td>
+                        </tr>
+                        <tr><td>CT per Part</td><td>${calculationResults.ctPerPart.toFixed(1)}</td><td>Per piece timing</td></tr>
+                    </table>
+
+                    <!-- Layout Information -->
+                    <div class="print-section-title">5. JIG LAYOUT & EFFICIENCY</div>
+                    <table class="print-table">
+                        <tr><th>Jig Size</th><td>${calculationResults.jigW} × ${calculationResults.jigH} cm</td></tr>
+                        <tr><th>Parts per Jig</th><td>${calculationResults.layout.count} pieces</td></tr>
+                        <tr><th>Calculation Mode</th><td>${calculationResults.isManualJig ? 'Manual Input' : 'Auto Calculate'}</td></tr>
+                        <tr><th>Orientation</th><td>${calculationResults.layout.rotated ? 'Rotated 90°' : 'Default Position'}</td></tr>
+                        <tr><th>Gap Between Parts</th><td>${calculationResults.gap} cm</td></tr>
+                        <tr><th>Jig Efficiency</th><td>${((calculationResults.layout.count * calculationResults.partW * calculationResults.partH) / (calculationResults.jigW * calculationResults.jigH) * 100).toFixed(1)}%</td></tr>
+                    </table>
+
+                    <!-- Cost Summary -->
+                    <div class="print-section-title">6. DETAILED COST ANALYSIS</div>
+                    <table class="print-table">
+                        <thead>
+                            <tr><th>Item</th><th>Consumption (g/part)</th><th>Unit Price (฿/g)</th><th>Cost per Part (฿)</th></tr>
+                        </thead>
+                        <tbody>
+                            ${calculationResults.costBreakdownData.map(item => 
+                                `<tr><td>${item.name}</td><td>${item.mass.toFixed(3)}</td><td>-</td><td>${item.cost.toFixed(3)}</td></tr>`
+                            ).join('')}
+                            <tr style="background-color:#f0f0f0;font-weight:bold;">
+                                <td colspan="3">TOTAL COST PER PART</td>
+                                <td>${calculationResults.currency}${calculationResults.totalCostPerPart.toFixed(3)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Production Metrics -->
+                    <div class="print-section-title">7. PRODUCTION METRICS</div>
+                    <table class="print-table">
+                        <tr><th>Paint Consumption per Part</th><td>${calculationResults.totalPaintPerPart.toFixed(2)} g</td></tr>
+                        <tr><th>Paint Consumption per Jig</th><td>${calculationResults.paintPerJig.toFixed(1)} g</td></tr>
+                        <tr><th>Production Rate</th><td>${(3600 / calculationResults.ctPerPart).toFixed(0)} parts/hour</td></tr>
+                        <tr><th>Daily Production (8hrs)</th><td>${(8 * 3600 / calculationResults.ctPerPart).toFixed(0)} parts/day</td></tr>
+                    </table>
+
+                    <div class="cost-summary">
+                        <h2>COST SUMMARY: ${calculationResults.currency}${calculationResults.totalCostPerPart.toFixed(3)} PER PART</h2>
+                        <p style="margin-top: 10px; font-size: 14px;">
+                            Report generated on ${currentDate} at ${currentTime}<br>
+                            Calculation ID: ${Date.now()}
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            window.print();
         }
 
         // Animation functions
@@ -1371,20 +1622,6 @@
             requestAnimationFrame(updateCounter);
         }
 
-        function addRippleEffect(button) {
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple-effect');
-            
-            const rect = button.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = (rect.width / 2 - size / 2) + 'px';
-            ripple.style.top = (rect.height / 2 - size / 2) + 'px';
-            
-            button.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        }
-
         function updateCostBreakdown(breakdownData, totalCost, currency) {
             const container = document.getElementById('costBreakdown');
             container.innerHTML = '';
@@ -1406,85 +1643,6 @@
                 <span><strong>${currency}${totalCost.toFixed(2)}</strong></span>
             `;
             container.appendChild(totalDiv);
-        }
-
-        // Print/Export function
-        function printReport() {
-            if (!calculationResults) {
-                alert('กรุณาคำนวณก่อนพิมพ์');
-                return;
-            }
-
-            const printSection = document.getElementById('printSection');
-            const printContent = document.getElementById('printContent');
-            
-            document.getElementById('printDate').textContent = new Date().toLocaleDateString('th-TH');
-            document.getElementById('calcDate').textContent = calculationResults.calculationDate;
-            
-            printContent.innerHTML = `
-                <h2>PROJECT: NPD TEST</h2>
-                <table class="print-table">
-                    <tr><th>DESCRIPTION</th><th></th></tr>
-                    <tr><td>Customer: TOYOTA</td><td></td></tr>
-                    <tr><td>Part Name: ${calculationResults.partName || 'PART A'}</td><td></td></tr>
-                    <tr><td>Part No: ${calculationResults.partNo || '000001-000000-A'}</td><td></td></tr>
-                    <tr><td>Material: ${document.getElementById('plasticType').value}</td><td></td></tr>
-                    ${calculationResults.selectedPreset ? `<tr><td>Process Type: ${calculationResults.selectedPreset}</td><td></td></tr>` : ''}
-                </table>
-
-                <h3>PART DIMENSIONS</h3>
-                <table class="print-table">
-                    <tr><th>W</th><th>L</th><th>H</th></tr>
-                    <tr><td>${calculationResults.partW}</td><td>${calculationResults.partH}</td><td>${calculationResults.partD}</td></tr>
-                </table>
-                <p>Surface Area: ${calculationResults.surfaceArea.toFixed(1)} cm²</p>
-
-                <h3>PAINT LAYERS</h3>
-                <table class="print-table">
-                    <thead>
-                        <tr><th>Layer</th><th>Type</th><th>Thickness (µm)</th><th>Price (฿/g)</th><th>Cost per Part</th></tr>
-                    </thead>
-                    <tbody>
-                        ${layers.map((layer, i) => {
-                            const cost = calculationResults.costBreakdownData.find(item => 
-                                item.name.includes(getLayerType(layer.paintId)) || 
-                                item.name.includes(layer.paintId.replace('preset-', '').toUpperCase())
-                            );
-                            return `<tr>
-                                <td>Layer ${i+1}</td>
-                                <td>${getLayerType(layer.paintId)}</td>
-                                <td>${layer.thickness}</td>
-                                <td>${layer.readyToUsePrice.toFixed(4)}</td>
-                                <td>${cost ? cost.cost.toFixed(2) : '0.00'}</td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-
-                <h3>JIG LAYOUT</h3>
-                <table class="print-table">
-                    <tr><th>Jig Size</th><td>${calculationResults.jigW} x ${calculationResults.jigH} cm</td></tr>
-                    <tr><th>Parts per Jig</th><td>${calculationResults.layout.count}</td></tr>
-                    <tr><th>Calculation Mode</th><td>${calculationResults.isManualJig ? 'Manual Input' : 'Auto Calculate'}</td></tr>
-                    <tr><th>Orientation</th><td>${calculationResults.isManualJig ? 'Manual' : (calculationResults.layout.rotated ? 'Rotated 90°' : 'Default')}</td></tr>
-                    <tr><th>Cycle Time per Part</th><td>${calculationResults.ctPerPart.toFixed(1)} sec</td></tr>
-                </table>
-
-                <h3>COST SUMMARY</h3>
-                <table class="print-table">
-                    <tr><th>Item</th><th>Amount (g)</th><th>Cost (฿)</th></tr>
-                    ${calculationResults.costBreakdownData.map(item => 
-                        `<tr><td>${item.name}</td><td>${item.mass.toFixed(2)}</td><td>${item.cost.toFixed(2)}</td></tr>`
-                    ).join('')}
-                    <tr style="font-weight: bold;">
-                        <td>TOTAL COST PER PART</td>
-                        <td>-</td>
-                        <td>${calculationResults.totalCostPerPart.toFixed(2)}</td>
-                    </tr>
-                </table>
-            `;
-            
-            window.print();
         }
 
         // Data loading functions
@@ -1535,10 +1693,15 @@
                 document.getElementById('jigHeight').value = '60';
                 document.getElementById('minGap').value = '2';
                 document.getElementById('cycleTime').value = '120';
+                document.getElementById('ctCleanInput').value = '15';
+                document.getElementById('ctBaseInput').value = '60';
+                document.getElementById('ctTopcoatInput').value = '45';
+                document.getElementById('ctInspectInput').value = '20';
                 document.getElementById('tryRotate').checked = false;
                 document.getElementById('plasticType').selectedIndex = 0;
                 document.getElementById('autoCalculate').checked = true;
                 document.getElementById('manualPartsGroup').style.display = 'none';
+                document.getElementById('autoCalcCT').checked = true;
                 
                 // Reset preset
                 document.getElementById('usePreset').checked = false;
