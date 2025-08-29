@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Manager - Admin Only</title>
+    <title>จัดการข้อมูลระบบ - Admin Only</title>
     <style>
         * {
             margin: 0;
@@ -141,6 +141,14 @@
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
+            overflow-x: auto;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .data-table thead, .data-table tbody {
+            display: table;
+            width: 100%;
         }
 
         .data-table th,
@@ -148,6 +156,7 @@
             padding: 8px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: table-cell;
         }
 
         .data-table th {
@@ -201,6 +210,19 @@
         .tab-content.active {
             display: block;
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #b0b8c4;
+            font-size: 0.9rem;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -209,6 +231,8 @@
         <div class="nav-links">
             <a href="index.html" class="nav-link">หน้าหลัก</a>
             <a href="paint-mixer.html" class="nav-link">คำนวณสีผสม</a>
+            <a href="film-calculator.html" class="nav-link">คำนวณ Film & Activator</a>
+            <a href="cost-history.html" class="nav-link">รายการ Cost ที่ทำแล้ว</a>
             <a href="data-manager.html" class="nav-link active">จัดการข้อมูล</a>
             <a href="login.html" class="nav-link">เข้าสู่ระบบ</a>
         </div>
@@ -224,6 +248,10 @@
                 <button class="tab-btn active" onclick="showTab('paints')">จัดการสี</button>
                 <button class="tab-btn" onclick="showTab('plastics')">จัดการพลาสติก</button>
                 <button class="tab-btn" onclick="showTab('cycles')">จัดการ Cycle Times</button>
+                <button class="tab-btn" onclick="showTab('cleaning')">จัดการสารทำความสะอาด</button>
+                <button class="tab-btn" onclick="showTab('film')">จัดการฟิล์ม</button>
+                <button class="tab-btn" onclick="showTab('activator')">จัดการ Activator</button>
+                <button class="tab-btn" onclick="showTab('calculations')">รายการ Cost ที่ทำแล้ว</button>
                 <button class="tab-btn" onclick="showTab('users')">จัดการผู้ใช้</button>
             </div>
 
@@ -232,8 +260,8 @@
                 <div class="card">
                     <h2>จัดการข้อมูลสี</h2>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="exportPaintsData()">Export paints.json</button>
-                        <input type="file" id="importPaints" accept=".json" style="display: none;" onchange="importPaints(event)">
+                        <button class="btn btn-primary" onclick="exportData('paints')">Export paints.json</button>
+                        <input type="file" id="importPaints" accept=".json" style="display: none;" onchange="importData('paints', event)">
                         <button class="btn btn-secondary" onclick="document.getElementById('importPaints').click()">Import JSON</button>
                         <button class="btn btn-secondary" onclick="addNewPaint()">เพิ่มสีใหม่</button>
                     </div>
@@ -247,7 +275,7 @@
                 <div class="card">
                     <h2>จัดการข้อมูลพลาสติก</h2>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="exportPlasticsData()">Export plastics.json</button>
+                        <button class="btn btn-primary" onclick="exportData('plastics')">Export plastics.json</button>
                         <button class="btn btn-secondary" onclick="addNewPlastic()">เพิ่มพลาสติกใหม่</button>
                     </div>
                     
@@ -260,11 +288,63 @@
                 <div class="card">
                     <h2>จัดการ Cycle Times</h2>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <button class="btn btn-primary" onclick="exportCyclesData()">Export cycle_times.json</button>
+                        <button class="btn btn-primary" onclick="exportData('cycles')">Export cycle_times.json</button>
                         <button class="btn btn-secondary" onclick="resetCycleDefaults()">รีเซ็ตค่าเริ่มต้น</button>
                     </div>
                     
                     <div id="cyclesDataTable"></div>
+                </div>
+            </div>
+
+            <!-- Cleaning Materials Management -->
+            <div id="cleaning-tab" class="tab-content">
+                <div class="card">
+                    <h2>จัดการสารทำความสะอาด</h2>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="exportData('cleaning')">Export cleaning.json</button>
+                        <button class="btn btn-secondary" onclick="addNewCleaning()">เพิ่มสารใหม่</button>
+                    </div>
+                    
+                    <div id="cleaningDataTable"></div>
+                </div>
+            </div>
+
+            <!-- Film Management -->
+            <div id="film-tab" class="tab-content">
+                <div class="card">
+                    <h2>จัดการฟิล์ม</h2>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="exportData('film')">Export film.json</button>
+                        <button class="btn btn-secondary" onclick="addNewFilm()">เพิ่มฟิล์มใหม่</button>
+                    </div>
+                    
+                    <div id="filmDataTable"></div>
+                </div>
+            </div>
+
+            <!-- Activator Management -->
+            <div id="activator-tab" class="tab-content">
+                <div class="card">
+                    <h2>จัดการ Activator</h2>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="exportData('activator')">Export activator.json</button>
+                        <button class="btn btn-secondary" onclick="addNewActivator()">เพิ่ม Activator ใหม่</button>
+                    </div>
+                    
+                    <div id="activatorDataTable"></div>
+                </div>
+            </div>
+
+            <!-- Calculations Management -->
+            <div id="calculations-tab" class="tab-content">
+                <div class="card">
+                    <h2>รายการ Cost ที่ทำแล้ว</h2>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="exportData('calculations')">Export ทั้งหมด</button>
+                        <button class="btn btn-danger" onclick="clearAllCalculations()">ล้างทั้งหมด</button>
+                    </div>
+                    
+                    <div id="calculationsDataTable"></div>
                 </div>
             </div>
 
@@ -294,6 +374,11 @@
             <p>จำเป็นต้องล็อกอินด้วยบัญชี Admin เท่านั้น</p>
             <a href="login.html" class="btn btn-primary" style="display: inline-block; margin-top: 15px; text-decoration: none;">เข้าสู่ระบบ</a>
         </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2025 bunnamchai.bu2025 - สงวนลิขสิทธิ์
+        </div>
     </div>
 
     <script>
@@ -301,6 +386,10 @@
             paints: [],
             plastics: [],
             cycles: {},
+            cleaning: [],
+            film: [],
+            activator: [],
+            calculations: [],
             users: []
         };
 
@@ -323,25 +412,59 @@
         }
 
         async function loadAllData() {
-            // Load existing data
+            // Load from localStorage
             currentData.paints = JSON.parse(localStorage.getItem('paintDB_v1') || '[]');
             currentData.users = JSON.parse(localStorage.getItem('systemUsers') || '[{"username":"namchai1","password":"namchai1","role":"admin"}]');
+            currentData.calculations = JSON.parse(localStorage.getItem('savedCalculations') || '[]');
             
-            try {
-                const cyclesResponse = await fetch('cycle_times.json');
-                if (cyclesResponse.ok) {
-                    currentData.cycles = await cyclesResponse.json();
+            // Load from JSON files
+            const files = ['cycle_times', 'plastics', 'cleaning', 'film', 'activator'];
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(`${file}.json`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (file === 'cycle_times') {
+                            currentData.cycles = data;
+                        } else {
+                            currentData[file] = data;
+                        }
+                    }
+                } catch (error) {
+                    console.warn(`Could not load ${file}.json`);
+                    setDefaultData(file);
                 }
-                
-                const plasticsResponse = await fetch('plastics.json');
-                if (plasticsResponse.ok) {
-                    currentData.plastics = await plasticsResponse.json();
-                }
-            } catch (error) {
-                console.warn('Could not load external data files');
             }
             
             renderAllTables();
+        }
+
+        function setDefaultData(type) {
+            switch(type) {
+                case 'cleaning':
+                    currentData.cleaning = [
+                        { id: 'pm', name: 'PM (Pre-cleaner)', price: 0.15, default_amount: 0.2, active: true },
+                        { id: 'p700', name: 'P700 (Main cleaner)', price: 0.18, default_amount: 0.2, active: true }
+                    ];
+                    break;
+                case 'film':
+                    currentData.film = [
+                        { id: 'i206', name: 'I206', width: 60, manufacturer: 'Standard', price: 12.5 }
+                    ];
+                    break;
+                case 'activator':
+                    currentData.activator = [
+                        { id: 'dmp-before', name: 'DMP Type Before', type: 'Before', manufacturer: 'Standard', price: 0.25 }
+                    ];
+                    break;
+                case 'plastics':
+                    currentData.plastics = [
+                        { code: 'ABS', name: 'ABS', requires_primer: false },
+                        { code: 'PP', name: 'PP (Polypropylene)', requires_primer: true }
+                    ];
+                    break;
+            }
         }
 
         function showTab(tabName) {
@@ -351,80 +474,172 @@
             
             event.target.classList.add('active');
             document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Render specific table
+            switch(tabName) {
+                case 'paints': renderPaintsTable(); break;
+                case 'plastics': renderPlasticsTable(); break;
+                case 'cycles': renderCyclesTable(); break;
+                case 'cleaning': renderCleaningTable(); break;
+                case 'film': renderFilmTable(); break;
+                case 'activator': renderActivatorTable(); break;
+                case 'calculations': renderCalculationsTable(); break;
+                case 'users': renderUsersTable(); break;
+            }
         }
 
         function renderAllTables() {
             renderPaintsTable();
-            renderPlasticsTable();
-            renderCyclesTable();
             renderUsersTable();
+            renderCalculationsTable();
         }
 
         function renderPaintsTable() {
             const container = document.getElementById('paintsDataTable');
             container.innerHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>ชื่อ</th>
-                            <th>ประเภท</th>
-                            <th>SG</th>
-                            <th>ราคา/กก.</th>
-                            <th>Ready to Use (฿/g)</th>
-                            <th>การกระทำ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${currentData.paints.map((paint, index) => `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><input type="text" value="${paint.id || ''}" onchange="updatePaint(${index}, 'id', this.value)"></td>
-                                <td><input type="text" value="${paint.name || ''}" onchange="updatePaint(${index}, 'name', this.value)"></td>
-                                <td>
-                                    <select onchange="updatePaint(${index}, 'type', this.value)">
-                                        <option value="Primer" ${paint.type === 'Primer' ? 'selected' : ''}>Primer</option>
-                                        <option value="Base" ${paint.type === 'Base' ? 'selected' : ''}>Base</option>
-                                        <option value="Top" ${paint.type === 'Top' ? 'selected' : ''}>Top</option>
-                                        <option value="Clear" ${paint.type === 'Clear' ? 'selected' : ''}>Clear</option>
-                                        <option value="Other" ${paint.type === 'Other' ? 'selected' : ''}>Other</option>
-                                    </select>
-                                </td>
-                                <td><input type="number" step="0.01" value="${paint.sg || 1.2}" onchange="updatePaint(${index}, 'sg', this.value)"></td>
-                                <td><input type="number" step="1" value="${paint.price || 500}" onchange="updatePaint(${index}, 'price', this.value)"></td>
-                                <td><input type="number" step="0.0001" value="${paint.ready_to_use_price || ''}" onchange="updatePaint(${index}, 'ready_to_use_price', this.value)"></td>
-                                <td><button class="btn btn-danger" onclick="deletePaint(${index})">ลบ</button></td>
+                                <th>ID</th>
+                                <th>ชื่อ</th>
+                                <th>ประเภท</th>
+                                <th>SG</th>
+                                <th>ราคา/กก.</th>
+                                <th>Ready to Use (฿/g)</th>
+                                <th>การกระทำ</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${currentData.paints.map((paint, index) => `
+                                <tr>
+                                    <td><input type="text" value="${paint.id || ''}" onchange="updatePaint(${index}, 'id', this.value)"></td>
+                                    <td><input type="text" value="${paint.name || ''}" onchange="updatePaint(${index}, 'name', this.value)"></td>
+                                    <td>
+                                        <select onchange="updatePaint(${index}, 'type', this.value)">
+                                            <option value="Primer" ${paint.type === 'Primer' ? 'selected' : ''}>Primer</option>
+                                            <option value="Base" ${paint.type === 'Base' ? 'selected' : ''}>Base</option>
+                                            <option value="Top" ${paint.type === 'Top' ? 'selected' : ''}>Top</option>
+                                            <option value="Clear" ${paint.type === 'Clear' ? 'selected' : ''}>Clear</option>
+                                            <option value="Other" ${paint.type === 'Other' ? 'selected' : ''}>Other</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" step="0.01" value="${paint.sg || 1.2}" onchange="updatePaint(${index}, 'sg', this.value)"></td>
+                                    <td><input type="number" step="1" value="${paint.price || 500}" onchange="updatePaint(${index}, 'price', this.value)"></td>
+                                    <td><input type="number" step="0.0001" value="${paint.ready_to_use_price || ''}" onchange="updatePaint(${index}, 'ready_to_use_price', this.value)"></td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deletePaint(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             `;
         }
 
-        function renderUsersTable() {
-            const container = document.getElementById('usersDataTable');
+        function renderCleaningTable() {
+            const container = document.getElementById('cleaningDataTable');
             container.innerHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ชื่อผู้ใช้</th>
-                            <th>สิทธิ์</th>
-                            <th>สร้างเมื่อ</th>
-                            <th>การกระทำ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${currentData.users.map((user, index) => `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td>${user.username}</td>
-                                <td>${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}</td>
-                                <td>${user.created_date || 'N/A'}</td>
-                                <td>
-                                    ${user.username !== 'namchai1' ? `<button class="btn btn-danger" onclick="deleteUser(${index})">ลบ</button>` : 'Admin หลัก'}
-                                </td>
+                                <th>ID</th>
+                                <th>ชื่อ</th>
+                                <th>ราคา (฿/g)</th>
+                                <th>ปริมาณเริ่มต้น</th>
+                                <th>ใช้งาน</th>
+                                <th>ผู้จำหน่าย</th>
+                                <th>การกระทำ</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${currentData.cleaning.map((item, index) => `
+                                <tr>
+                                    <td><input type="text" value="${item.id || ''}" onchange="updateCleaning(${index}, 'id', this.value)"></td>
+                                    <td><input type="text" value="${item.name || ''}" onchange="updateCleaning(${index}, 'name', this.value)"></td>
+                                    <td><input type="number" step="0.01" value="${item.price || 0}" onchange="updateCleaning(${index}, 'price', this.value)"></td>
+                                    <td><input type="number" step="0.1" value="${item.default_amount || 0}" onchange="updateCleaning(${index}, 'default_amount', this.value)"></td>
+                                    <td><input type="checkbox" ${item.active ? 'checked' : ''} onchange="updateCleaning(${index}, 'active', this.checked)"></td>
+                                    <td><input type="text" value="${item.supplier || ''}" onchange="updateCleaning(${index}, 'supplier', this.value)"></td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deleteCleaning(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderFilmTable() {
+            const container = document.getElementById('filmDataTable');
+            container.innerHTML = `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ชื่อฟิล์ม</th>
+                                <th>ความกว้าง (cm)</th>
+                                <th>ผู้ผลิต</th>
+                                <th>ราคา (฿/m)</th>
+                                <th>Pattern</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${currentData.film.map((item, index) => `
+                                <tr>
+                                    <td><input type="text" value="${item.id || ''}" onchange="updateFilm(${index}, 'id', this.value)"></td>
+                                    <td><input type="text" value="${item.name || ''}" onchange="updateFilm(${index}, 'name', this.value)"></td>
+                                    <td><input type="number" step="0.1" value="${item.width || 60}" onchange="updateFilm(${index}, 'width', this.value)"></td>
+                                    <td><input type="text" value="${item.manufacturer || ''}" onchange="updateFilm(${index}, 'manufacturer', this.value)"></td>
+                                    <td><input type="number" step="0.01" value="${item.price || 0}" onchange="updateFilm(${index}, 'price', this.value)"></td>
+                                    <td><input type="text" value="${item.pattern || ''}" onchange="updateFilm(${index}, 'pattern', this.value)"></td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deleteFilm(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderActivatorTable() {
+            const container = document.getElementById('activatorDataTable');
+            container.innerHTML = `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ชื่อ Activator</th>
+                                <th>ประเภท</th>
+                                <th>ผู้ผลิต</th>
+                                <th>ราคา (฿/g)</th>
+                                <th>อุณหภูมิ</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${currentData.activator.map((item, index) => `
+                                <tr>
+                                    <td><input type="text" value="${item.id || ''}" onchange="updateActivator(${index}, 'id', this.value)"></td>
+                                    <td><input type="text" value="${item.name || ''}" onchange="updateActivator(${index}, 'name', this.value)"></td>
+                                    <td>
+                                        <select onchange="updateActivator(${index}, 'type', this.value)">
+                                            <option value="Before" ${item.type === 'Before' ? 'selected' : ''}>Before</option>
+                                            <option value="After" ${item.type === 'After' ? 'selected' : ''}>After</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" value="${item.manufacturer || ''}" onchange="updateActivator(${index}, 'manufacturer', this.value)"></td>
+                                    <td><input type="number" step="0.01" value="${item.price || 0}" onchange="updateActivator(${index}, 'price', this.value)"></td>
+                                    <td><input type="text" value="${item.application_temp || ''}" onchange="updateActivator(${index}, 'application_temp', this.value)"></td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deleteActivator(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             `;
         }
 
@@ -436,31 +651,33 @@
             }
             
             container.innerHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>รหัส</th>
-                            <th>ชื่อ</th>
-                            <th>ต้อง Primer</th>
-                            <th>การกระทำ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${currentData.plastics.map((plastic, index) => `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><input type="text" value="${plastic.code || ''}" onchange="updatePlastic(${index}, 'code', this.value)"></td>
-                                <td><input type="text" value="${plastic.name || ''}" onchange="updatePlastic(${index}, 'name', this.value)"></td>
-                                <td>
-                                    <select onchange="updatePlastic(${index}, 'requires_primer', this.value === 'true')">
-                                        <option value="false" ${!plastic.requires_primer ? 'selected' : ''}>ไม่ต้อง</option>
-                                        <option value="true" ${plastic.requires_primer ? 'selected' : ''}>ต้อง</option>
-                                    </select>
-                                </td>
-                                <td><button class="btn btn-danger" onclick="deletePlastic(${index})">ลบ</button></td>
+                                <th>รหัส</th>
+                                <th>ชื่อ</th>
+                                <th>ต้อง Primer</th>
+                                <th>การกระทำ</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${currentData.plastics.map((plastic, index) => `
+                                <tr>
+                                    <td><input type="text" value="${plastic.code || ''}" onchange="updatePlastic(${index}, 'code', this.value)"></td>
+                                    <td><input type="text" value="${plastic.name || ''}" onchange="updatePlastic(${index}, 'name', this.value)"></td>
+                                    <td>
+                                        <select onchange="updatePlastic(${index}, 'requires_primer', this.value === 'true')">
+                                            <option value="false" ${!plastic.requires_primer ? 'selected' : ''}>ไม่ต้อง</option>
+                                            <option value="true" ${plastic.requires_primer ? 'selected' : ''}>ต้อง</option>
+                                        </select>
+                                    </td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deletePlastic(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             `;
         }
 
@@ -473,54 +690,131 @@
             
             container.innerHTML = `
                 <h3>ค่าเริ่มต้น</h3>
-                <table class="data-table">
-                    <tr>
-                        <th>Default Jig CT (sec)</th>
-                        <td><input type="number" value="${currentData.cycles.defaults.jig || 120}" onchange="updateCycleDefault('jig', this.value)"></td>
-                    </tr>
-                    <tr>
-                        <th>Default Gap (cm)</th>
-                        <td><input type="number" step="0.1" value="${currentData.cycles.defaults.gap_cm || 2}" onchange="updateCycleDefault('gap_cm', this.value)"></td>
-                    </tr>
-                    <tr>
-                        <th>Default Loss (%)</th>
-                        <td><input type="number" value="${currentData.cycles.defaults.loss_pct || 30}" onchange="updateCycleDefault('loss_pct', this.value)"></td>
-                    </tr>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <tr>
+                            <th>Default Jig CT (sec)</th>
+                            <td><input type="number" value="${currentData.cycles.defaults.jig || 120}" onchange="updateCycleDefault('jig', this.value)"></td>
+                        </tr>
+                        <tr>
+                            <th>Default Gap (cm)</th>
+                            <td><input type="number" step="0.1" value="${currentData.cycles.defaults.gap_cm || 2}" onchange="updateCycleDefault('gap_cm', this.value)"></td>
+                        </tr>
+                        <tr>
+                            <th>Default Loss (%)</th>
+                            <td><input type="number" value="${currentData.cycles.defaults.loss_pct || 30}" onchange="updateCycleDefault('loss_pct', this.value)"></td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderUsersTable() {
+            const container = document.getElementById('usersDataTable');
+            container.innerHTML = `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ชื่อผู้ใช้</th>
+                                <th>สิทธิ์</th>
+                                <th>สร้างเมื่อ</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${currentData.users.map((user, index) => `
+                                <tr>
+                                    <td>${user.username}</td>
+                                    <td>${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้ทั่วไป'}</td>
+                                    <td>${user.created_date || 'N/A'}</td>
+                                    <td>
+                                        ${user.username !== 'namchai1' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${index})">ลบ</button>` : 'Admin หลัก'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderCalculationsTable() {
+            const container = document.getElementById('calculationsDataTable');
+            if (!currentData.calculations.length) {
+                container.innerHTML = '<p style="text-align: center; color: #b0b8c4;">ไม่มีการคำนวณที่บันทึก</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Part Name</th>
+                                <th>Part No</th>
+                                <th>Cost/Part</th>
+                                <th>วันที่บันทึก</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${currentData.calculations.map((calc, index) => `
+                                <tr>
+                                    <td>${calc.modelName}</td>
+                                    <td>${calc.partName}</td>
+                                    <td>${calc.partNo}</td>
+                                    <td>${calc.currency}${calc.totalCostPerPart.toFixed(2)}</td>
+                                    <td>${new Date(calc.saveDate).toLocaleDateString('th-TH')}</td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="deleteCalculation(${index})">ลบ</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             `;
         }
 
         // Update functions
         function updatePaint(index, field, value) {
             currentData.paints[index][field] = field === 'sg' || field === 'price' || field === 'ready_to_use_price' ? parseFloat(value) : value;
-            savePaintsData();
+            localStorage.setItem('paintDB_v1', JSON.stringify(currentData.paints));
+        }
+
+        function updateCleaning(index, field, value) {
+            if (field === 'price' || field === 'default_amount') {
+                currentData.cleaning[index][field] = parseFloat(value) || 0;
+            } else {
+                currentData.cleaning[index][field] = value;
+            }
+        }
+
+        function updateFilm(index, field, value) {
+            if (field === 'price' || field === 'width') {
+                currentData.film[index][field] = parseFloat(value) || 0;
+            } else {
+                currentData.film[index][field] = value;
+            }
+        }
+
+        function updateActivator(index, field, value) {
+            if (field === 'price') {
+                currentData.activator[index][field] = parseFloat(value) || 0;
+            } else {
+                currentData.activator[index][field] = value;
+            }
         }
 
         function updatePlastic(index, field, value) {
             currentData.plastics[index][field] = value;
-            saveData('plastics.json', currentData.plastics);
         }
 
         function updateCycleDefault(field, value) {
             currentData.cycles.defaults[field] = parseFloat(value);
-            saveData('cycle_times.json', currentData.cycles);
         }
 
-        function deletePaint(index) {
-            if (confirm('ต้องการลบสีนี้หรือไม่?')) {
-                currentData.paints.splice(index, 1);
-                savePaintsData();
-                renderPaintsTable();
-            }
-        }
-
-        function deletePlastic(index) {
-            if (confirm('ต้องการลบพลาสติกนี้หรือไม่?')) {
-                currentData.plastics.splice(index, 1);
-                renderPlasticsTable();
-            }
-        }
-
+        // Add new functions
         function addNewPaint() {
             const newPaint = {
                 id: `paint-${Date.now()}`,
@@ -531,8 +825,47 @@
                 ready_to_use_price: 0.5
             };
             currentData.paints.push(newPaint);
-            savePaintsData();
+            localStorage.setItem('paintDB_v1', JSON.stringify(currentData.paints));
             renderPaintsTable();
+        }
+
+        function addNewCleaning() {
+            const newCleaning = {
+                id: `cleaning-${Date.now()}`,
+                name: 'New Cleaning Material',
+                price: 0.15,
+                default_amount: 0.2,
+                active: true,
+                supplier: 'New Supplier'
+            };
+            currentData.cleaning.push(newCleaning);
+            renderCleaningTable();
+        }
+
+        function addNewFilm() {
+            const newFilm = {
+                id: `film-${Date.now()}`,
+                name: 'New Film',
+                width: 60,
+                manufacturer: 'New Manufacturer',
+                price: 15.0,
+                pattern: 'Standard'
+            };
+            currentData.film.push(newFilm);
+            renderFilmTable();
+        }
+
+        function addNewActivator() {
+            const newActivator = {
+                id: `activator-${Date.now()}`,
+                name: 'New Activator',
+                type: 'Before',
+                manufacturer: 'New Manufacturer',
+                price: 0.25,
+                application_temp: '20-25°C'
+            };
+            currentData.activator.push(newActivator);
+            renderActivatorTable();
         }
 
         function addNewPlastic() {
@@ -579,6 +912,51 @@
             alert('เพิ่มผู้ใช้เรียบร้อยแล้ว');
         }
 
+        // Delete functions
+        function deletePaint(index) {
+            if (confirm('ต้องการลบสีนี้หรือไม่?')) {
+                currentData.paints.splice(index, 1);
+                localStorage.setItem('paintDB_v1', JSON.stringify(currentData.paints));
+                renderPaintsTable();
+            }
+        }
+
+        function deleteCleaning(index) {
+            if (confirm('ต้องการลบสารทำความสะอาดนี้หรือไม่?')) {
+                currentData.cleaning.splice(index, 1);
+                renderCleaningTable();
+            }
+        }
+
+        function deleteFilm(index) {
+            if (confirm('ต้องการลบฟิล์มนี้หรือไม่?')) {
+                currentData.film.splice(index, 1);
+                renderFilmTable();
+            }
+        }
+
+        function deleteActivator(index) {
+            if (confirm('ต้องการลบ Activator นี้หรือไม่?')) {
+                currentData.activator.splice(index, 1);
+                renderActivatorTable();
+            }
+        }
+
+        function deletePlastic(index) {
+            if (confirm('ต้องการลบพลาสติกนี้หรือไม่?')) {
+                currentData.plastics.splice(index, 1);
+                renderPlasticsTable();
+            }
+        }
+
+        function deleteCalculation(index) {
+            if (confirm('ต้องการลบการคำนวณนี้หรือไม่?')) {
+                currentData.calculations.splice(index, 1);
+                localStorage.setItem('savedCalculations', JSON.stringify(currentData.calculations));
+                renderCalculationsTable();
+            }
+        }
+
         function deleteUser(index) {
             if (confirm('ต้องการลบผู้ใช้นี้หรือไม่?')) {
                 currentData.users.splice(index, 1);
@@ -587,60 +965,76 @@
             }
         }
 
-        function savePaintsData() {
-            localStorage.setItem('paintDB_v1', JSON.stringify(currentData.paints));
-        }
-
-        function saveData(filename, data) {
-            // In real application, this would save to server
-            console.log(`Saving ${filename}:`, data);
+        function clearAllCalculations() {
+            if (confirm('ต้องการล้างการคำนวณทั้งหมดหรือไม่? การกระทำนี้ไม่สามารถยกเลิกได้')) {
+                currentData.calculations = [];
+                localStorage.removeItem('savedCalculations');
+                renderCalculationsTable();
+                alert('ล้างการคำนวณทั้งหมดเรียบร้อยแล้ว');
+            }
         }
 
         // Export functions
-        function exportPaintsData() {
-            const dataStr = JSON.stringify(currentData.paints, null, 2);
+        function exportData(type) {
+            let data, filename;
+            
+            switch(type) {
+                case 'paints':
+                    data = currentData.paints;
+                    filename = 'paints.json';
+                    break;
+                case 'plastics':
+                    data = currentData.plastics;
+                    filename = 'plastics.json';
+                    break;
+                case 'cycles':
+                    data = currentData.cycles;
+                    filename = 'cycle_times.json';
+                    break;
+                case 'cleaning':
+                    data = currentData.cleaning;
+                    filename = 'cleaning.json';
+                    break;
+                case 'film':
+                    data = currentData.film;
+                    filename = 'film.json';
+                    break;
+                case 'activator':
+                    data = currentData.activator;
+                    filename = 'activator.json';
+                    break;
+                case 'calculations':
+                    data = currentData.calculations;
+                    filename = `calculations_${new Date().toISOString().slice(0,10)}.json`;
+                    break;
+            }
+            
+            const dataStr = JSON.stringify(data, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const exportFileDefaultName = 'paints.json';
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.setAttribute('download', filename);
             linkElement.click();
-        }
-
-        function exportPlasticsData() {
-            const dataStr = JSON.stringify(currentData.plastics, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'plastics.json');
-            linkElement.click();
+            alert(`Export ${filename} เรียบร้อยแล้ว`);
         }
 
-        function exportCyclesData() {
-            const dataStr = JSON.stringify(currentData.cycles, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'cycle_times.json');
-            linkElement.click();
-        }
-
-        function importPaints(event) {
+        function importData(type, event) {
             const file = event.target.files[0];
             if (!file) return;
             
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedPaints = JSON.parse(e.target.result);
-                    if (Array.isArray(importedPaints)) {
-                        currentData.paints = importedPaints;
-                        savePaintsData();
-                        renderPaintsTable();
-                        alert('นำเข้าข้อมูลสีเรียบร้อยแล้ว');
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData) || (type === 'cycles' && typeof importedData === 'object')) {
+                        currentData[type] = importedData;
+                        if (type === 'paints') {
+                            localStorage.setItem('paintDB_v1', JSON.stringify(importedData));
+                        }
+                        renderAllTables();
+                        alert(`นำเข้าข้อมูล ${type} เรียบร้อยแล้ว`);
                     } else {
                         alert('รูปแบบไฟล์ไม่ถูกต้อง');
                     }
@@ -649,6 +1043,22 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        function resetCycleDefaults() {
+            if (confirm('ต้องการรีเซ็ต Cycle Times เป็นค่าเริ่มต้นหรือไม่?')) {
+                currentData.cycles = {
+                    units: "seconds",
+                    defaults: { jig: 120, gap_cm: 2, jig_size_cm: [50, 60], loss_pct: 30 },
+                    by_process: [
+                        { process: "paint_only", ct_per_jig: 120 },
+                        { process: "decoration", ct_per_jig: 150 },
+                        { process: "full_process", ct_per_jig: 210 }
+                    ]
+                };
+                renderCyclesTable();
+                alert('รีเซ็ตค่าเริ่มต้นเรียบร้อยแล้ว');
+            }
         }
     </script>
 </body>
