@@ -236,7 +236,6 @@
             margin-top: 5px;
         }
 
-        /* Canvas Layout Container */
         .canvas-layout-container {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(79, 209, 199, 0.3);
@@ -328,6 +327,19 @@
             width: auto;
         }
 
+        .process-clean-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #fbbf24;
+        }
+
+        .process-clean-item select {
+            width: 250px;
+            margin-left: 20px;
+        }
+
         .preset-section {
             background: rgba(16, 185, 129, 0.1);
             border-color: rgba(16, 185, 129, 0.3);
@@ -388,7 +400,6 @@
             grid-column: 1 / -1;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -443,7 +454,27 @@
             color: #fca5a5;
         }
 
-        /* Print Styles - Enhanced for 2-3 pages */
+        .process-breakdown {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .process-breakdown .kpi-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .process-breakdown .kpi-item {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .process-breakdown .kpi-value {
+            color: #10b981;
+        }
+
         @media print {
             * {
                 visibility: hidden;
@@ -798,15 +829,85 @@
             </table>
         </div>
 
-        <!-- Cleaning Materials -->
+        <!-- Enhanced Cleaning Materials -->
         <div class="card cleaning-section">
             <h2>วัสดุทำความสะอาด</h2>
-            <div class="checkbox-group">
-                <input type="checkbox" id="autoCleaningCalc" checked>
-                <label for="autoCleaningCalc">คำนวณอัตโนมัติ (20% ของสี)</label>
-            </div>
             
-            <div id="cleaningMaterialsTable"></div>
+            <!-- Process-based cleaning -->
+            <div class="cleaning-processes">
+                <div class="process-clean-item">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cleanNewWork" checked>
+                        <label for="cleanNewWork"><strong>เช็ดงานใหม่</strong> (20% ของสีต่อชิ้น)</label>
+                    </div>
+                    <select id="cleanNewWorkAgent" style="margin-left: 20px; width: 250px;">
+                        <option value="p700" selected>P700 (Main cleaner)</option>
+                        <option value="pm">PM (Pre-cleaner)</option>
+                        <option value="ipa">IPA (Isopropyl Alcohol)</option>
+                        <option value="acetone">Acetone</option>
+                        <option value="mek">MEK (Methyl Ethyl Ketone)</option>
+                    </select>
+                </div>
+
+                <div class="process-clean-item">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cleanBeforeBase">
+                        <label for="cleanBeforeBase">เช็ดที่ Process Base</label>
+                    </div>
+                    <select id="cleanBeforeBaseAgent" style="margin-left: 20px; width: 250px; display: none;">
+                        <option value="p700" selected>P700 (Main cleaner)</option>
+                        <option value="pm">PM (Pre-cleaner)</option>
+                        <option value="ipa">IPA (Isopropyl Alcohol)</option>
+                        <option value="acetone">Acetone</option>
+                        <option value="mek">MEK (Methyl Ethyl Ketone)</option>
+                    </select>
+                </div>
+
+                <div class="process-clean-item">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cleanBeforeTopcoat">
+                        <label for="cleanBeforeTopcoat">เช็ดที่ Process Topcoat</label>
+                    </div>
+                    <select id="cleanBeforeTopcoatAgent" style="margin-left: 20px; width: 250px; display: none;">
+                        <option value="p700" selected>P700 (Main cleaner)</option>
+                        <option value="pm">PM (Pre-cleaner)</option>
+                        <option value="ipa">IPA (Isopropyl Alcohol)</option>
+                        <option value="acetone">Acetone</option>
+                        <option value="mek">MEK (Methyl Ethyl Ketone)</option>
+                    </select>
+                </div>
+
+                <div class="process-clean-item">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cleanBeforeTF">
+                        <label for="cleanBeforeTF">เช็ดที่ Process T/F</label>
+                    </div>
+                    <select id="cleanBeforeTFAgent" style="margin-left: 20px; width: 250px; display: none;">
+                        <option value="p700" selected>P700 (Main cleaner)</option>
+                        <option value="pm">PM (Pre-cleaner)</option>
+                        <option value="ipa">IPA (Isopropyl Alcohol)</option>
+                        <option value="acetone">Acetone</option>
+                        <option value="mek">MEK (Methyl Ethyl Ketone)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cleaning agents pricing -->
+            <div id="cleaningAgentsTable" style="margin-top: 20px;">
+                <h3 style="color: #fbbf24; margin-bottom: 10px;">ราคาน้ำยาทำความสะอาด</h3>
+                <table class="consumables-table">
+                    <thead>
+                        <tr><th>น้ำยา</th><th>ราคา (฿/g)</th><th>ปริมาณต่อชิ้น (g/part)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>P700 (Main cleaner)</td><td><input type="number" id="priceP700" value="0.18" step="0.01" style="width: 80px;"></td><td><input type="number" id="amountP700" value="5.0" step="0.1" style="width: 80px;"></td></tr>
+                        <tr><td>PM (Pre-cleaner)</td><td><input type="number" id="pricePM" value="0.15" step="0.01" style="width: 80px;"></td><td><input type="number" id="amountPM" value="5.0" step="0.1" style="width: 80px;"></td></tr>
+                        <tr><td>IPA (Isopropyl Alcohol)</td><td><input type="number" id="priceIPA" value="0.12" step="0.01" style="width: 80px;"></td><td><input type="number" id="amountIPA" value="3.0" step="0.1" style="width: 80px;"></td></tr>
+                        <tr><td>Acetone</td><td><input type="number" id="priceAcetone" value="0.10" step="0.01" style="width: 80px;"></td><td><input type="number" id="amountAcetone" value="3.0" step="0.1" style="width: 80px;"></td></tr>
+                        <tr><td>MEK (Methyl Ethyl Ketone)</td><td><input type="number" id="priceMEK" value="0.20" step="0.01" style="width: 80px;"></td><td><input type="number" id="amountMEK" value="4.0" step="0.1" style="width: 80px;"></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Action Buttons -->
@@ -822,6 +923,8 @@
         <!-- Results -->
         <div class="card results-section" id="resultsSection" style="display: none;">
             <h2>ผลลัพธ์</h2>
+            
+            <!-- Main KPIs -->
             <div class="kpi-grid">
                 <div class="kpi-item">
                     <span class="kpi-value" id="partsPerJig">0</span>
@@ -830,10 +933,6 @@
                 <div class="kpi-item">
                     <span class="kpi-value" id="paintPerPart">0</span>
                     <div class="kpi-label">Paint per Part (g)</div>
-                </div>
-                <div class="kpi-item">
-                    <span class="kpi-value" id="paintPerJig">0</span>
-                    <div class="kpi-label">Paint per Jig (g)</div>
                 </div>
                 <div class="kpi-item">
                     <span class="kpi-value" id="ctPerJig">0</span>
@@ -850,6 +949,22 @@
             </div>
 
             <div class="orientation-tag" id="orientationTag"></div>
+
+            <!-- Paint per Jig by Process -->
+            <div class="process-breakdown">
+                <h3 style="color: #10b981; margin: 20px 0 10px 0;">🎨 Paint per Jig by Process</h3>
+                <div class="kpi-grid" id="paintProcessBreakdown">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- CT per Jig by Process -->
+            <div class="process-breakdown">
+                <h3 style="color: #10b981; margin: 20px 0 10px 0;">⏱️ CT per Jig by Process</h3>
+                <div class="kpi-grid" id="ctProcessBreakdown">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
 
             <h3 style="color: #4fd1c7; margin: 20px 0 10px 0;">Cost Breakdown</h3>
             <div class="breakdown" id="costBreakdown"></div>
@@ -911,7 +1026,6 @@
         // Global variables
         let layers = [];
         let paintDB = [];
-        let cleaningMaterials = [];
         let calculationResults = null;
         let selectedPreset = null;
         let pendingAction = null;
@@ -935,12 +1049,84 @@
             setupJigCalculationMode();
             setupCTCalculation();
             setupCanvasEventListeners();
+            setupCleaningProcesses();
         });
 
         // User authentication check
         function checkUserLogin() {
             const user = JSON.parse(localStorage.getItem('currentUser') || '{"username":"guest","role":"user"}');
             document.getElementById('userInfo').textContent = `ผู้ใช้: ${user.username} (${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ทั่วไป'})`;
+        }
+
+        // Setup cleaning processes dropdowns
+        function setupCleaningProcesses() {
+            const cleaningProcesses = ['cleanBeforeBase', 'cleanBeforeTopcoat', 'cleanBeforeTF'];
+            
+            cleaningProcesses.forEach(processId => {
+                const checkbox = document.getElementById(processId);
+                const dropdown = document.getElementById(processId + 'Agent');
+                
+                checkbox.addEventListener('change', function() {
+                    dropdown.style.display = this.checked ? 'inline-block' : 'none';
+                });
+            });
+        }
+
+        // Calculate cleaning costs with new system
+        function calculateCleaningCosts(totalPaintPerPart) {
+            let cleaningCost = 0;
+            const cleaningData = [];
+            
+            const cleaningAgents = {
+                'p700': { price: parseFloat(document.getElementById('priceP700').value) || 0.18, defaultAmount: parseFloat(document.getElementById('amountP700').value) || 5.0 },
+                'pm': { price: parseFloat(document.getElementById('pricePM').value) || 0.15, defaultAmount: parseFloat(document.getElementById('amountPM').value) || 5.0 },
+                'ipa': { price: parseFloat(document.getElementById('priceIPA').value) || 0.12, defaultAmount: parseFloat(document.getElementById('amountIPA').value) || 3.0 },
+                'acetone': { price: parseFloat(document.getElementById('priceAcetone').value) || 0.10, defaultAmount: parseFloat(document.getElementById('amountAcetone').value) || 3.0 },
+                'mek': { price: parseFloat(document.getElementById('priceMEK').value) || 0.20, defaultAmount: parseFloat(document.getElementById('amountMEK').value) || 4.0 }
+            };
+            
+            // เช็ดงานใหม่ (20% ของสี)
+            if (document.getElementById('cleanNewWork').checked) {
+                const agentType = document.getElementById('cleanNewWorkAgent').value;
+                const agent = cleaningAgents[agentType];
+                const amount = totalPaintPerPart * 0.2; // 20% ของสี
+                const cost = amount * agent.price;
+                
+                cleaningCost += cost;
+                cleaningData.push({
+                    name: `เช็ดงานใหม่ (${agentType.toUpperCase()})`,
+                    mass: amount,
+                    cost: cost,
+                    process: 'initial'
+                });
+            }
+            
+            // เช็ดแต่ละ process
+            const processes = [
+                { id: 'cleanBeforeBase', name: 'เช็ดก่อน Base' },
+                { id: 'cleanBeforeTopcoat', name: 'เช็ดก่อน Topcoat' },
+                { id: 'cleanBeforeTF', name: 'เช็ดก่อน T/F' }
+            ];
+            
+            processes.forEach(proc => {
+                const checkbox = document.getElementById(proc.id);
+                if (checkbox.checked) {
+                    const agentType = document.getElementById(proc.id + 'Agent').value;
+                    const agent = cleaningAgents[agentType];
+                    const amount = agent.defaultAmount; // ใช้ปริมาณ default
+                    const cost = amount * agent.price;
+                    
+                    cleaningCost += cost;
+                    cleaningData.push({
+                        name: `${proc.name} (${agentType.toUpperCase()})`,
+                        mass: amount,
+                        cost: cost,
+                        process: proc.id
+                    });
+                }
+            });
+            
+            return { cleaningCost, cleaningData };
         }
 
         // Setup canvas event listeners
@@ -1081,72 +1267,7 @@
 
         // Cleaning materials calculation setup
         function setupCleaningCalculation() {
-            loadCleaningMaterials();
-            const autoCalc = document.getElementById('autoCleaningCalc');
-            
-            autoCalc.addEventListener('change', function() {
-                renderCleaningMaterialsTable();
-            });
-        }
-
-        async function loadCleaningMaterials() {
-            try {
-                const response = await fetch('cleaning.json', { cache: 'no-cache' });
-                if (response.ok) {
-                    cleaningMaterials = await response.json();
-                } else {
-                    cleaningMaterials = [
-                        { id: 'pm', name: 'PM (Pre-cleaner)', price: 0.15, default_amount: 0.2, active: true },
-                        { id: 'p700', name: 'P700 (Main cleaner)', price: 0.18, default_amount: 0.2, active: true },
-                        { id: 'ipa', name: 'IPA (Isopropyl Alcohol)', price: 0.12, default_amount: 0.2, active: false }
-                    ];
-                }
-            } catch (error) {
-                cleaningMaterials = [
-                    { id: 'pm', name: 'PM (Pre-cleaner)', price: 0.15, default_amount: 0.2, active: true },
-                    { id: 'p700', name: 'P700 (Main cleaner)', price: 0.18, default_amount: 0.2, active: true },
-                    { id: 'ipa', name: 'IPA (Isopropyl Alcohol)', price: 0.12, default_amount: 0.2, active: false }
-                ];
-            }
-            renderCleaningMaterialsTable();
-        }
-
-        function renderCleaningMaterialsTable() {
-            const container = document.getElementById('cleaningMaterialsTable');
-            const autoCalc = document.getElementById('autoCleaningCalc').checked;
-            
-            container.innerHTML = `
-                <table class="consumables-table">
-                    <thead>
-                        <tr>
-                            <th>วัสดุ</th>
-                            <th>ราคา (฿/g)</th>
-                            <th>ปริมาณ (g/part)</th>
-                            <th>ใช้งาน</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${cleaningMaterials.map((material, index) => `
-                            <tr>
-                                <td>${material.name}</td>
-                                <td><input type="number" value="${material.price}" step="0.01" onchange="updateCleaningMaterial(${index}, 'price', this.value)"></td>
-                                <td><input type="number" id="amount-${material.id}" step="0.1" ${autoCalc ? 'disabled' : ''} onchange="updateCleaningMaterial(${index}, 'amount', this.value)"></td>
-                                <td><input type="checkbox" ${material.active ? 'checked' : ''} onchange="updateCleaningMaterial(${index}, 'active', this.checked)"></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-        }
-
-        function updateCleaningMaterial(index, field, value) {
-            if (field === 'price') {
-                cleaningMaterials[index].price = parseFloat(value) || 0;
-            } else if (field === 'active') {
-                cleaningMaterials[index].active = value;
-            } else if (field === 'amount') {
-                cleaningMaterials[index].amount = parseFloat(value) || 0;
-            }
+            // Using new system with dropdowns
         }
 
         // Image preview setup
@@ -1311,8 +1432,8 @@
                 const cols = Math.floor((availW + gap) / (pW + gap));
                 
                 let maxHeight = availH;
-                if (allowClipping && jigH === 50) { // assuming 50cm is the clippable side
-                    maxHeight = availH * 1.2; // allow 20% overhang
+                if (allowClipping && jigH === 50) {
+                    maxHeight = availH * 1.2;
                 }
                 
                 let rows = 0;
@@ -1342,21 +1463,17 @@
             const canvasW = canvas.width - 2 * padding;
             const canvasH = canvas.height - 2 * padding;
             
-            // Calculate scale to fit jig in canvas
             const scaleW = canvasW / jigW;
             const scaleH = canvasH / jigH;
-            const scale = Math.min(scaleW, scaleH) * 0.9; // 90% to leave some margin
+            const scale = Math.min(scaleW, scaleH) * 0.9;
             
-            // Center the drawing
             const jigDrawW = jigW * scale;
             const jigDrawH = jigH * scale;
             const startX = (canvas.width - jigDrawW) / 2;
             const startY = (canvas.height - jigDrawH) / 2;
             
-            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw background grid
             drawGrid(scale);
             
             // Draw Jig boundary
@@ -1366,14 +1483,12 @@
             ctx.fillRect(startX, startY, jigDrawW, jigDrawH);
             ctx.strokeRect(startX, startY, jigDrawW, jigDrawH);
             
-            // Draw jig label
             ctx.fillStyle = '#0066ff';
             ctx.font = 'bold 14px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(`Jig: ${jigW}×${jigH}cm`, startX + jigDrawW/2, startY - 10);
             
             if (layout.count === 0) {
-                // Draw "No Layout" message
                 ctx.fillStyle = '#ff6b6b';
                 ctx.font = 'bold 16px Arial';
                 ctx.textAlign = 'center';
@@ -1381,11 +1496,9 @@
                 return;
             }
             
-            // Determine actual part dimensions (handle rotation)
             const actualPartW = layout.rotated ? partH : partW;
             const actualPartH = layout.rotated ? partW : partH;
             
-            // Draw parts
             ctx.fillStyle = 'rgba(51, 204, 119, 0.7)';
             ctx.strokeStyle = '#33cc77';
             ctx.lineWidth = 2;
@@ -1399,11 +1512,9 @@
                 const partDrawW = actualPartW * scale;
                 const partDrawH = actualPartH * scale;
                 
-                // Draw part rectangle
                 ctx.fillRect(partX, partY, partDrawW, partDrawH);
                 ctx.strokeRect(partX, partY, partDrawW, partDrawH);
                 
-                // Draw part number
                 ctx.fillStyle = '#000';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
@@ -1411,8 +1522,7 @@
                     partX + partDrawW/2, 
                     partY + partDrawH/2 + 4);
                 
-                // Draw part dimensions
-                if (scale > 3) { // Only if large enough
+                if (scale > 3) {
                     ctx.font = '10px Arial';
                     ctx.fillText(`${actualPartW}×${actualPartH}`, 
                         partX + partDrawW/2, 
@@ -1422,10 +1532,8 @@
                 ctx.fillStyle = 'rgba(51, 204, 119, 0.7)';
             }
             
-            // Draw scale reference
             drawScaleReference(startX, startY + jigDrawH + 30, scale);
             
-            // Draw rotation indicator
             if (layout.rotated) {
                 ctx.fillStyle = '#fbbf24';
                 ctx.font = 'bold 14px Arial';
@@ -1435,8 +1543,8 @@
         }
 
         function drawGrid(scale) {
-            const gridSize = 5 * scale; // 5cm grid
-            if (gridSize < 20) return; // Skip if too small
+            const gridSize = 5 * scale;
+            if (gridSize < 20) return;
             
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 1;
@@ -1457,8 +1565,8 @@
         }
 
         function drawScaleReference(x, y, scale) {
-            const refLength = 10 * scale; // 10cm reference
-            if (refLength < 30) return; // Skip if too small
+            const refLength = 10 * scale;
+            if (refLength < 30) return;
             
             ctx.strokeStyle = '#4fd1c7';
             ctx.lineWidth = 2;
@@ -1467,7 +1575,6 @@
             ctx.lineTo(x + refLength, y);
             ctx.stroke();
             
-            // Scale markers
             ctx.beginPath();
             ctx.moveTo(x, y - 5);
             ctx.lineTo(x, y + 5);
@@ -1492,13 +1599,8 @@
             const tryRotate = document.getElementById('tryRotate').checked;
             const allowClipping = document.getElementById('allowClipping').checked;
             
-            // Recalculate layout
             layoutResult = partsPerJig(partW, partH, jigW, jigH, gap, tryRotate, allowClipping);
-            
-            // Update canvas info
             updateCanvasInfo(layoutResult, jigW, jigH, partW, partH, allowClipping);
-            
-            // Draw layout
             drawJigLayout(jigW, jigH, partW, partH, gap, layoutResult);
         }
 
@@ -1525,7 +1627,53 @@
             }
         }
 
-        // Main calculation function (รวมการคำนวณเดิมและ Canvas)
+        // Process breakdown display functions
+        function updateProcessBreakdowns(calculationResults, layout) {
+            // Paint Process Breakdown
+            const paintContainer = document.getElementById('paintProcessBreakdown');
+            if (calculationResults.paintByProcess) {
+                let paintHTML = '';
+                Object.entries(calculationResults.paintByProcess).forEach(([process, data]) => {
+                    if (data.mass > 0) {
+                        const paintPerJig = data.mass * layout.count;
+                        paintHTML += `
+                            <div class="kpi-item">
+                                <span class="kpi-value">${paintPerJig.toFixed(1)}g</span>
+                                <div class="kpi-label">Paint ${process.toUpperCase()} per Jig</div>
+                            </div>
+                        `;
+                    }
+                });
+                paintContainer.innerHTML = paintHTML || '<p style="text-align: center; color: #b0b8c4;">ไม่มีข้อมูล Paint แยกตาม Process</p>';
+            }
+            
+            // CT Process Breakdown
+            const ctContainer = document.getElementById('ctProcessBreakdown');
+            if (calculationResults.ctByProcess) {
+                let ctHTML = '';
+                Object.entries(calculationResults.ctByProcess).forEach(([process, time]) => {
+                    if (time > 0) {
+                        let displayName = process;
+                        switch(process) {
+                            case 'cleanBeforeBase': displayName = 'CT เช็ดก่อน BASE'; break;
+                            case 'base': displayName = 'CT BASE'; break;
+                            case 'cleanBeforeTopcoat': displayName = 'CT เช็ดก่อน TOPCOAT'; break;
+                            case 'topcoat': displayName = 'CT TOPCOAT'; break;
+                            case 'inspect': displayName = 'CT ตรวจสอบ'; break;
+                        }
+                        ctHTML += `
+                            <div class="kpi-item">
+                                <span class="kpi-value">${time}s</span>
+                                <div class="kpi-label">${displayName}</div>
+                            </div>
+                        `;
+                    }
+                });
+                ctContainer.innerHTML = ctHTML || '<p style="text-align: center; color: #b0b8c4;">ไม่มีข้อมูล CT แยกตาม Process</p>';
+            }
+        }
+
+        // Main calculation function
         function calculate() {
             ensurePrimerForPP();
             
@@ -1544,7 +1692,6 @@
 
             const surfaceArea = surfaceAreaRect(partW, partH, partD, surfaceFactor);
             
-            // Check calculation mode
             let layout;
             const isManual = document.getElementById('manualInput').checked;
             
@@ -1555,90 +1702,68 @@
                 layout = partsPerJig(partW, partH, jigW, jigH, gap, tryRotate, allowClipping);
             }
             
-            layoutResult = layout; // Store for canvas
+            layoutResult = layout;
             
+            // Paint by Process calculation
+            let paintByProcess = {
+                primer: { mass: 0, cost: 0 },
+                base: { mass: 0, cost: 0 },
+                topcoat: { mass: 0, cost: 0 }
+            };
+
             let totalPaintPerPart = 0;
             let costBreakdownData = [];
             let totalCostPerPart = 0;
             
-// ใหม่ - แยกตาม process
-let paintByProcess = {
-    clean: { mass: 0, cost: 0 },
-    base: { mass: 0, cost: 0 },
-    topcoat: { mass: 0, cost: 0 },
-    primer: { mass: 0, cost: 0 }
-};
-
-layers.forEach(layer => {
-    if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
-        const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
-        const massGrams = volumeCm3 * 1.2;
-        const massWithLoss = massGrams * (1 + lossPct / 100);
-        
-        // ระบุ process type
-        let processType = 'base'; // default
-        if (layer.paintId.includes('primer')) processType = 'primer';
-        else if (layer.paintId.includes('base')) processType = 'base';
-        else if (layer.paintId.includes('top')) processType = 'topcoat';
-        
-        paintByProcess[processType].mass += massWithLoss;
-        paintByProcess[processType].cost += massWithLoss * layer.readyToUsePrice;
-        
-        totalPaintPerPart += massWithLoss;
-        
-        const layerCost = massWithLoss * layer.readyToUsePrice;
-        totalCostPerPart += layerCost;
-        
-        const paintName = layer.paintId.startsWith('preset-') ? 
-            layer.paintId.replace('preset-', '').toUpperCase() : 
-            (paintDB.find(p => p.id === layer.paintId)?.name || 'Unknown');
-        
-        costBreakdownData.push({
-            name: `${paintName} (${processType.toUpperCase()})`,
-            mass: massWithLoss,
-            cost: layerCost,
-            process: processType
-        });
-    }
-});
-
-// เก็บข้อมูล Paint by Process
-calculationResults.paintByProcess = paintByProcess;
-
-                }
-            });
-
-            // Calculate cleaning materials cost
-            let cleaningCost = 0;
-            const autoClean = document.getElementById('autoCleaningCalc').checked;
-            
-            cleaningMaterials.forEach((material, index) => {
-                if (material.active) {
-                    let amount = autoClean ? totalPaintPerPart * (material.default_amount || 0.2) : 
-                                 (material.amount || 0);
+            layers.forEach(layer => {
+                if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
+                    const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
+                    const massGrams = volumeCm3 * 1.2;
+                    const massWithLoss = massGrams * (1 + lossPct / 100);
                     
-                    if (autoClean) {
-                        const amountInput = document.getElementById(`amount-${material.id}`);
-                        if (amountInput) {
-                            amountInput.value = amount.toFixed(1);
-                        }
-                    }
+                    let processType = 'base';
+                    if (layer.paintId.includes('primer')) processType = 'primer';
+                    else if (layer.paintId.includes('base')) processType = 'base';
+                    else if (layer.paintId.includes('top')) processType = 'topcoat';
                     
-                    cleaningCost += amount * material.price;
-                    costBreakdownData.push({ 
-                        name: material.name, 
-                        mass: amount, 
-                        cost: amount * material.price 
+                    paintByProcess[processType].mass += massWithLoss;
+                    paintByProcess[processType].cost += massWithLoss * layer.readyToUsePrice;
+                    
+                    totalPaintPerPart += massWithLoss;
+                    
+                    const layerCost = massWithLoss * layer.readyToUsePrice;
+                    totalCostPerPart += layerCost;
+                    
+                    const paintName = layer.paintId.startsWith('preset-') ? 
+                        layer.paintId.replace('preset-', '').toUpperCase() : 
+                        (paintDB.find(p => p.id === layer.paintId)?.name || 'Unknown');
+                    
+                    costBreakdownData.push({
+                        name: `${paintName} (${processType.toUpperCase()})`,
+                        mass: massWithLoss,
+                        cost: layerCost,
+                        process: processType
                     });
                 }
             });
 
+            // Calculate cleaning costs
+            const { cleaningCost, cleaningData } = calculateCleaningCosts(totalPaintPerPart);
             totalCostPerPart += cleaningCost;
+            costBreakdownData.push(...cleaningData);
             
             const paintPerJig = totalPaintPerPart * layout.count;
             const ctPerPart = layout.count > 0 ? cycleTime / layout.count : 0;
             
-            // Collect CT breakdown
+            // CT by Process breakdown
+            const ctByProcess = {
+                cleanBeforeBase: parseFloat(document.getElementById('ctCleanInput').value) || 0,
+                base: parseFloat(document.getElementById('ctBaseInput').value) || 0,
+                cleanBeforeTopcoat: Math.round((parseFloat(document.getElementById('ctCleanInput').value) || 0) * 0.5),
+                topcoat: parseFloat(document.getElementById('ctTopcoatInput').value) || 0,
+                inspect: parseFloat(document.getElementById('ctInspectInput').value) || 0
+            };
+            
             const ctBreakdown = {
                 clean: parseFloat(document.getElementById('ctCleanInput').value) || 0,
                 base: parseFloat(document.getElementById('ctBaseInput').value) || 0,
@@ -1649,7 +1774,7 @@ calculationResults.paintByProcess = paintByProcess;
             calculationResults = {
                 partW, partH, partD, surfaceFactor, lossPct, jigW, jigH, gap, tryRotate, allowClipping, cycleTime,
                 surfaceArea, layout, totalPaintPerPart, paintPerJig, ctPerPart, totalCostPerPart,
-                costBreakdownData, currency, selectedPreset, ctBreakdown,
+                costBreakdownData, currency, selectedPreset, ctBreakdown, ctByProcess, paintByProcess,
                 calculationDate: new Date().toLocaleDateString('th-TH'),
                 isManualJig: isManual,
                 layers: [...layers]
@@ -1658,11 +1783,10 @@ calculationResults.paintByProcess = paintByProcess;
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('resultsSection').classList.add('animate-in');
             document.getElementById('printBtn').style.display = 'inline-block';
-            document.getElementById('saveBtn').style.display = 'inline-block';
+            document.getElementById('save            Btn').style.display = 'inline-block';
             
             animateCounter('partsPerJig', 0, layout.count, 0);
             animateCounter('paintPerPart', 0, totalPaintPerPart, 2);
-            animateCounter('paintPerJig', 0, paintPerJig, 1);
             animateCounter('ctPerJig', 0, cycleTime, 0);
             animateCounter('ctPerPart', 0, ctPerPart, 1);
             animateCounter('costPerPart', 0, totalCostPerPart, 2, currency);
@@ -1671,12 +1795,126 @@ calculationResults.paintByProcess = paintByProcess;
                 isManual ? 'Manual Input' : (layout.rotated ? 'Rotated 90°' : 'Default Orientation');
             
             updateCostBreakdown(costBreakdownData, totalCostPerPart, currency);
+            updateProcessBreakdowns(calculationResults, layout);
             
-            // Draw Canvas Layout
+            // Draw Canvas Layout พร้อม Seams ที่ชัดเจน
             setTimeout(() => {
-                drawJigLayout(jigW, jigH, partW, partH, gap, layout);
+                drawJigLayoutWithSeams(jigW, jigH, partW, partH, gap, layout);
                 updateCanvasInfo(layout, jigW, jigH, partW, partH, allowClipping);
             }, 500);
+        }
+
+        // ======== ENHANCED CANVAS DRAWING WITH SEAMS ========
+        function drawPartWithSeams(x, y, w, h, ctx, partNumber) {
+            // Fill part with green color
+            ctx.fillStyle = 'rgba(51, 204, 119, 0.7)';
+            ctx.fillRect(x, y, w, h);
+            
+            // Draw thick border with bright green
+            ctx.strokeStyle = '#00ff00'; // bright green
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, w, h);
+            
+            // Draw corner joint circles (seam indicators)
+            const radius = 4;
+            const corners = [
+                [x, y],           // top-left
+                [x + w, y],       // top-right
+                [x, y + h],       // bottom-left
+                [x + w, y + h]    // bottom-right
+            ];
+            
+            corners.forEach(([cx, cy]) => {
+                ctx.beginPath();
+                ctx.fillStyle = '#ffff00';  // yellow joints
+                ctx.strokeStyle = '#cc9900';
+                ctx.lineWidth = 1.5;
+                ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+            });
+            
+            // Draw part number in center
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(partNumber.toString(), x + w/2, y + h/2 + 4);
+            
+            // Draw dimensions if scale is large enough
+            const scale = w / 10; // approximate scale
+            if (scale > 3) {
+                ctx.font = '10px Arial';
+                const actualW = layout.rotated ? partH : partW;
+                const actualH = layout.rotated ? partW : partH;
+                ctx.fillText(`${actualW}×${actualH}cm`, x + w/2, y + h/2 + 16);
+            }
+        }
+
+        // Enhanced Jig Layout Drawing
+        function drawJigLayoutWithSeams(jigW, jigH, partW, partH, gap, layout) {
+            const padding = 40;
+            const canvasW = canvas.width - 2 * padding;
+            const canvasH = canvas.height - 2 * padding;
+            
+            const scaleW = canvasW / jigW;
+            const scaleH = canvasH / jigH;
+            const scale = Math.min(scaleW, scaleH) * 0.9;
+            
+            const jigDrawW = jigW * scale;
+            const jigDrawH = jigH * scale;
+            const startX = (canvas.width - jigDrawW) / 2;
+            const startY = (canvas.height - jigDrawH) / 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawGrid(scale);
+            
+            // Draw Jig boundary with blue color
+            ctx.strokeStyle = '#0066ff';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(0, 102, 255, 0.1)';
+            ctx.fillRect(startX, startY, jigDrawW, jigDrawH);
+            ctx.strokeRect(startX, startY, jigDrawW, jigDrawH);
+            
+            // Jig label
+            ctx.fillStyle = '#0066ff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Jig: ${jigW}×${jigH}cm`, startX + jigDrawW/2, startY - 10);
+            
+            if (layout.count === 0) {
+                ctx.fillStyle = '#ff6b6b';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('❌ ไม่สามารถจัดวางได้', startX + jigDrawW/2, startY + jigDrawH/2);
+                return;
+            }
+            
+            const actualPartW = layout.rotated ? partH : partW;
+            const actualPartH = layout.rotated ? partW : partH;
+            
+            // Draw each part with seams
+            for (let i = 0; i < layout.count; i++) {
+                const col = i % layout.cols;
+                const row = Math.floor(i / layout.cols);
+                
+                const partX = startX + gap * scale + col * (actualPartW + gap) * scale;
+                const partY = startY + gap * scale + row * (actualPartH + gap) * scale;
+                const partDrawW = actualPartW * scale;
+                const partDrawH = actualPartH * scale;
+                
+                // *** USE ENHANCED DRAWING WITH SEAMS ***
+                drawPartWithSeams(partX, partY, partDrawW, partDrawH, ctx, i + 1);
+            }
+            
+            drawScaleReference(startX, startY + jigDrawH + 30, scale);
+            
+            if (layout.rotated) {
+                ctx.fillStyle = '#fbbf24';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('🔄 Rotated 90° for optimal layout', startX, startY + jigDrawH + 60);
+            }
         }
 
         // Modal functions for Print/Save
@@ -1742,7 +1980,12 @@ calculationResults.paintByProcess = paintByProcess;
                 ...calculationResults,
                 saveDate: new Date().toISOString(),
                 layers: [...layers],
-                cleaningMaterials: cleaningMaterials.filter(m => m.active)
+                cleaningProcesses: {
+                    cleanNewWork: document.getElementById('cleanNewWork').checked,
+                    cleanBeforeBase: document.getElementById('cleanBeforeBase').checked,
+                    cleanBeforeTopcoat: document.getElementById('cleanBeforeTopcoat').checked,
+                    cleanBeforeTF: document.getElementById('cleanBeforeTF').checked
+                }
             };
             
             savedCalculations.push(newCalculation);
@@ -1757,7 +2000,6 @@ calculationResults.paintByProcess = paintByProcess;
             const currentDate = new Date().toLocaleDateString('th-TH');
             const currentTime = new Date().toLocaleTimeString('th-TH');
             
-            // Get image if available
             const imageElement = document.getElementById('imagePreview');
             const hasImage = imageElement && imageElement.src && imageElement.style.display !== 'none';
             
@@ -1801,71 +2043,54 @@ calculationResults.paintByProcess = paintByProcess;
                         </div>
                     </div>
 
-                    <!-- Paint System -->
-                    <div class="print-section-title">3. PAINT SYSTEM</div>
+                    <!-- Paint System by Process -->
+                    <div class="print-section-title">3. PAINT SYSTEM BY PROCESS</div>
                     <table class="print-table compact-section">
                         <thead>
-                            <tr><th>Layer</th><th>Type</th><th>Thickness (μm)</th><th>Price (฿/g)</th><th>Cost (฿)</th></tr>
+                            <tr><th>Process</th><th>Paint per Part (g)</th><th>Paint per Jig (g)</th><th>Cost per Part (฿)</th></tr>
                         </thead>
                         <tbody>
-                            ${calculationResults.layers.map((layer, i) => {
-                                const cost = calculationResults.costBreakdownData.find(item => 
-                                    item.name.includes(layer.paintId.replace('preset-', '').toUpperCase())
-                                );
-                                return `<tr>
-                                    <td>${i+1}</td>
-                                    <td>${layer.paintId.replace('preset-', '').toUpperCase()}</td>
-                                    <td>${layer.thickness}</td>
-                                    <td>${layer.readyToUsePrice.toFixed(3)}</td>
-                                    <td>${cost ? cost.cost.toFixed(3) : '0.000'}</td>
-                                </tr>`;
-                            }).join('')}
+                            ${Object.entries(calculationResults.paintByProcess).map(([process, data]) => 
+                                data.mass > 0 ? `<tr>
+                                    <td>${process.toUpperCase()}</td>
+                                    <td>${data.mass.toFixed(2)}</td>
+                                    <td>${(data.mass * calculationResults.layout.count).toFixed(1)}</td>
+                                    <td>${data.cost.toFixed(3)}</td>
+                                </tr>` : ''
+                            ).join('')}
                         </tbody>
                     </table>
 
-                    <!-- Page Break -->
-                    <div class="page-break"></div>
-
-                    <!-- Cycle Time Analysis -->
-                    <div class="print-section-title">4. CYCLE TIME & LAYOUT</div>
-                    <div style="display: flex; gap: 10mm;">
-                        <div style="flex: 1;">
-                            <table class="print-table">
-                                <tr><th>Process</th><th>Time (sec)</th></tr>
-                                <tr><td>Cleaning</td><td>${calculationResults.ctBreakdown.clean}</td></tr>
-                                <tr><td>Base Coat</td><td>${calculationResults.ctBreakdown.base}</td></tr>
-                                <tr><td>Top Coat</td><td>${calculationResults.ctBreakdown.topcoat}</td></tr>
-                                <tr><td>Inspection</td><td>${calculationResults.ctBreakdown.inspect}</td></tr>
-                                <tr style="font-weight:bold;"><td>Total CT</td><td>${calculationResults.cycleTime}</td></tr>
-                                <tr><td>CT per Part</td><td>${calculationResults.ctPerPart.toFixed(1)}</td></tr>
-                            </table>
-                        </div>
-                        <div style="flex: 1;">
-                            <table class="print-table">
-                                <tr><th>Jig Size</th><td>${calculationResults.jigW} × ${calculationResults.jigH} cm</td></tr>
-                                <tr><th>Parts per Jig</th><td>${calculationResults.layout.count} pcs</td></tr>
-                                <tr><th>Gap</th><td>${calculationResults.gap} cm</td></tr>
-                                <tr><th>Orientation</th><td>${calculationResults.layout.rotated ? 'Rotated 90°' : 'Default'}</td></tr>
-                                <tr><th>Production Rate</th><td>${(3600 / calculationResults.ctPerPart).toFixed(0)} pcs/hr</td></tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Cost Analysis -->
-                    <div class="print-section-title">5. COST BREAKDOWN</div>
+                    <!-- CT Analysis by Process -->
+                    <div class="print-section-title">4. CYCLE TIME ANALYSIS BY PROCESS</div>
                     <table class="print-table compact-section">
                         <thead>
-                            <tr><th>Item</th><th>Consumption (g)</th><th>Cost per Part (฿)</th></tr>
+                            <tr><th>Process</th><th>Time (sec)</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            ${calculationResults.costBreakdownData.map(item => 
-                                `<tr><td>${item.name}</td><td>${item.mass.toFixed(2)}</td><td>${item.cost.toFixed(3)}</td></tr>`
+                            ${Object.entries(calculationResults.ctByProcess).map(([process, time]) => 
+                                time > 0 ? `<tr>
+                                    <td>${process.replace(/([A-Z])/g, ' $1').trim()}</td>
+                                    <td>${time}</td>
+                                    <td>${process.includes('clean') ? 'Cleaning process' : 
+                                         process.includes('base') ? 'Base coating' :
+                                         process.includes('topcoat') ? 'Topcoat application' :
+                                         process.includes('inspect') ? 'Quality inspection' : 'Process step'}</td>
+                                </tr>` : ''
                             ).join('')}
-                            <tr style="background-color:#f0f0f0;font-weight:bold;">
-                                <td colspan="2">TOTAL COST PER PART</td>
-                                <td>${calculationResults.currency}${calculationResults.totalCostPerPart.toFixed(3)}</td>
+                            <tr style="font-weight:bold;background-color:#f0f0f0;">
+                                <td>Total CT per Jig</td><td>${calculationResults.cycleTime}</td><td>Complete production cycle</td>
                             </tr>
                         </tbody>
+                    </table>
+
+                    <!-- Layout & Cost Summary -->
+                    <div class="print-section-title">5. JIG LAYOUT & COST SUMMARY</div>
+                    <table class="print-table compact-section">
+                        <tr><th>Jig Size</th><td>${calculationResults.jigW} × ${calculationResults.jigH} cm</td></tr>
+                        <tr><th>Parts per Jig</th><td>${calculationResults.layout.count} pieces</td></tr>
+                        <tr><th>Orientation</th><td>${calculationResults.layout.rotated ? 'Rotated 90°' : 'Default Position'}</td></tr>
+                        <tr><th>Production Rate</th><td>${(3600 / calculationResults.ctPerPart).toFixed(0)} pcs/hr</td></tr>
                     </table>
 
                     <div class="cost-summary">
@@ -1929,30 +2154,6 @@ calculationResults.paintByProcess = paintByProcess;
                     const paintsData = await paintsResponse.json();
                     setDB(paintsData);
                 }
-                
-                const plasticsResponse = await fetch('plastics.json', { cache: 'no-cache' });
-                if (plasticsResponse.ok) {
-                    window.PLASTICS = await plasticsResponse.json();
-                }
-                
-                const cycleResponse = await fetch('cycle_times.json', { cache: 'no-cache' });
-                if (cycleResponse.ok) {
-                    const cycleData = await cycleResponse.json();
-                    window.CT_PRESET = cycleData;
-                    
-                    if (cycleData.defaults) {
-                        const defaults = cycleData.defaults;
-                        document.getElementById('cycleTime').value = defaults.jig || 120;
-                        document.getElementById('minGap').value = defaults.gap_cm || 2;
-                        document.getElementById('lossPct').value = defaults.loss_pct || 30;
-                        
-                        if (defaults.jig_size_cm) {
-                            document.getElementById('jigWidth').value = defaults.jig_size_cm[0] || 50;
-                            document.getElementById('jigHeight').value = defaults.jig_size_cm[1] || 60;
-                        }
-                    }
-                }
-                
             } catch (error) {
                 console.warn('Failed to load external data files:', error);
             }
@@ -1960,6 +2161,7 @@ calculationResults.paintByProcess = paintByProcess;
 
         function resetAll() {
             if (confirm('ต้องการรีเซ็ตข้อมูลทั้งหมดหรือไม่?')) {
+                // Reset form values
                 document.getElementById('partWidth').value = '10';
                 document.getElementById('partHeight').value = '5';
                 document.getElementById('partDepth').value = '2';
@@ -1969,30 +2171,46 @@ calculationResults.paintByProcess = paintByProcess;
                 document.getElementById('jigHeight').value = '60';
                 document.getElementById('minGap').value = '2';
                 document.getElementById('cycleTime').value = '120';
+                
+                // Reset CT inputs
                 document.getElementById('ctCleanInput').value = '15';
                 document.getElementById('ctBaseInput').value = '60';
                 document.getElementById('ctTopcoatInput').value = '45';
                 document.getElementById('ctInspectInput').value = '20';
+                
+                // Reset checkboxes
                 document.getElementById('tryRotate').checked = false;
                 document.getElementById('allowClipping').checked = false;
-                document.getElementById('plasticType').selectedIndex = 0;
                 document.getElementById('autoCalculate').checked = true;
-                document.getElementById('manualPartsGroup').style.display = 'none';
                 document.getElementById('autoCalcCT').checked = true;
                 
-                // Reset preset
+                // Reset cleaning checkboxes
+                document.getElementById('cleanNewWork').checked = true;
+                document.getElementById('cleanBeforeBase').checked = false;
+                document.getElementById('cleanBeforeTopcoat').checked = false;
+                document.getElementById('cleanBeforeTF').checked = false;
+                
+                // Hide cleaning dropdowns
+                document.getElementById('cleanBeforeBaseAgent').style.display = 'none';
+                document.getElementById('cleanBeforeTopcoatAgent').style.display = 'none';
+                document.getElementById('cleanBeforeTFAgent').style.display = 'none';
+                
+                // Reset other elements
+                document.getElementById('manualPartsGroup').style.display = 'none';
+                document.getElementById('plasticType').selectedIndex = 0;
                 document.getElementById('usePreset').checked = false;
                 document.getElementById('presetOptions').style.display = 'none';
-                document.querySelectorAll('.preset-item').forEach(item => item.classList.remove('selected'));
-                selectedPreset = null;
                 
+                // Clear data
                 layers = [];
                 updateLayersTable();
                 
+                // Hide results
                 document.getElementById('resultsSection').style.display = 'none';
                 document.getElementById('printBtn').style.display = 'none';
                 document.getElementById('saveBtn').style.display = 'none';
                 
+                // Clear image
                 document.getElementById('partImage').value = '';
                 document.getElementById('imagePreview').style.display = 'none';
                 
@@ -2000,10 +2218,13 @@ calculationResults.paintByProcess = paintByProcess;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 document.getElementById('canvasInfo').textContent = 'กดปุ่ม "CALCULATE" เพื่อแสดงผล Layout';
                 
+                // Reset global variables
                 calculationResults = null;
                 layoutResult = null;
+                selectedPreset = null;
             }
         }
     </script>
 </body>
 </html>
+
