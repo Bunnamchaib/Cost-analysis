@@ -1561,26 +1561,50 @@
             let costBreakdownData = [];
             let totalCostPerPart = 0;
             
-            layers.forEach(layer => {
-                if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
-                    const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
-                    const massGrams = volumeCm3 * 1.2;
-                    const massWithLoss = massGrams * (1 + lossPct / 100);
-                    
-                    totalPaintPerPart += massWithLoss;
-                    
-                    const layerCost = massWithLoss * layer.readyToUsePrice;
-                    totalCostPerPart += layerCost;
-                    
-                    const paintName = layer.paintId.startsWith('preset-') ? 
-                        layer.paintId.replace('preset-', '').toUpperCase() : 
-                        (paintDB.find(p => p.id === layer.paintId)?.name || 'Unknown');
-                    
-                    costBreakdownData.push({
-                        name: paintName,
-                        mass: massWithLoss,
-                        cost: layerCost
-                    });
+// ใหม่ - แยกตาม process
+let paintByProcess = {
+    clean: { mass: 0, cost: 0 },
+    base: { mass: 0, cost: 0 },
+    topcoat: { mass: 0, cost: 0 },
+    primer: { mass: 0, cost: 0 }
+};
+
+layers.forEach(layer => {
+    if (layer.thickness > 0 && layer.readyToUsePrice > 0) {
+        const volumeCm3 = surfaceArea * (layer.thickness * 1e-4);
+        const massGrams = volumeCm3 * 1.2;
+        const massWithLoss = massGrams * (1 + lossPct / 100);
+        
+        // ระบุ process type
+        let processType = 'base'; // default
+        if (layer.paintId.includes('primer')) processType = 'primer';
+        else if (layer.paintId.includes('base')) processType = 'base';
+        else if (layer.paintId.includes('top')) processType = 'topcoat';
+        
+        paintByProcess[processType].mass += massWithLoss;
+        paintByProcess[processType].cost += massWithLoss * layer.readyToUsePrice;
+        
+        totalPaintPerPart += massWithLoss;
+        
+        const layerCost = massWithLoss * layer.readyToUsePrice;
+        totalCostPerPart += layerCost;
+        
+        const paintName = layer.paintId.startsWith('preset-') ? 
+            layer.paintId.replace('preset-', '').toUpperCase() : 
+            (paintDB.find(p => p.id === layer.paintId)?.name || 'Unknown');
+        
+        costBreakdownData.push({
+            name: `${paintName} (${processType.toUpperCase()})`,
+            mass: massWithLoss,
+            cost: layerCost,
+            process: processType
+        });
+    }
+});
+
+// เก็บข้อมูล Paint by Process
+calculationResults.paintByProcess = paintByProcess;
+
                 }
             });
 
